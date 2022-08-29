@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock title %}
+
+{% block content %}
+    <h1>This is register page</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+            {{ registerForm.errors }}
+            {{ registerForm.as_p }}
+            <input type="submit" value="Register"/>
+
+    </form>
+
+    <a href="{% url 'loginPage' %}">Login account.</a>
+    <a href="{% url 'ITDeptAccountRegister' %}">Register IT Dept account.</a>
+
+{% endblock content %}

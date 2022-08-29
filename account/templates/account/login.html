@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+    {% for message in messages %}
+        <p class="">{{ message }}</p>
+    {% endfor %}
+
+    <h1>This is login page</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" class="" id="username" name="username" placeholder="Username" autocapitalize="none">
+        <input type="password" class="" id="password" name="password" placeholder="password" autocapitalize="none">
+        <input type="submit" class="" value="Login">
+    </form>
+    <a href="{% url 'registerPage' %}">Register account.</a>
+    <a href="{% url 'ITDeptAccountRegister' %}">Register IT Dept account.</a>
+{% endblock content %}

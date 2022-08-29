@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}user_page{% endblock title %}
+
+{% block content %}
+    <a href="{% url 'logout' %}">Logout</a> 
+    <h1>you are not authenticated into admin page {{ request.user }}</h1>
+    <a href="/account/login">Login account.</a>
+
+{% endblock content %}
