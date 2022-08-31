@@ -11,7 +11,8 @@ from .decorators import unauthenticated_user, admin_only, ITDept_only
 from django.contrib.auth.models import Group
 from .models import Theme
 
-@unauthenticated_user
+@login_required
+@admin_only
 def registerPage(request):
     form = RegisterForm()
     if request.method == 'POST':
@@ -31,8 +32,9 @@ def registerPage(request):
             messages.error(request, form.errors)
             
     return render(request, './account/register.html', { 'registerForm': form })
-
-@unauthenticated_user
+    
+@login_required
+@admin_only
 def ITDeptAccountRegister(request):
     form = RegisterForm()
     if request.method == 'POST':
@@ -69,7 +71,7 @@ def loginPage(request):
             messages.error(request, 'Check your password!')
             
     return render(request, './account/login.html')
-    
+
 def index(request):
 
     if Theme.objects.filter(user=request.user.username).exists():

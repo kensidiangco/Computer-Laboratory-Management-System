@@ -1,21 +1,15 @@
 {% load static %}
 {% load tailwind_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-gray-50">
     <head>
-        {% tailwind_css %}
         <title>
             {% block title %}{% endblock title %}
         </title>
+        {% tailwind_css %}
         <link rel="stylesheet" type="text/css" href="{% static 'account/base.css' %}">
     </head>
     <body>
-        <div class="p-4 bg-white">
-            <div class="flex gap-4">
-                <a class="text-md" href="{% url 'index' %}">CLMS</a>
-                <p class="text-md">Settings</p>
-            </div>
-        </div>
         {% block content  %}
         
         {% endblock content %}

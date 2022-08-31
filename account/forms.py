@@ -9,24 +9,24 @@ class RegisterForm(UserCreationForm):
         widgets = {
             'first_name': forms.TextInput(attrs={
                 'placeholder':'First Name',
-                'class': 'form-control form-control-user',
+                'class': 'rounded-md transition transition-delay-2',
                 'required': '',
             }),
             'last_name': forms.TextInput(attrs={
                 'placeholder':'Last Name',
-                'class': 'form-control form-control-user',
+                'class': 'rounded-md transition transition-delay-2',
                 'required': '',
             }),
             'username': forms.TextInput(attrs={
                 'placeholder':'Username',
-                'class': 'form-control form-control-user',
+                'class': 'rounded-md transition transition-delay-2',
                 'autocapitalize':'none',
                 'id':'username',
             }),
             'email': forms.TextInput(attrs={
                 'type': 'email',
                 'placeholder':'Email',
-                'class': 'form-control',
+                'class': 'rounded-md transition transition-delay-2',
                 'required': '',
       }),
     }
@@ -37,10 +37,10 @@ class RegisterForm(UserCreationForm):
         
         self.fields['password1'].widget = forms.PasswordInput(attrs={
             'placeholder': ("New password"),
-            'class': ("form-control form-control-user"),
+            'class': ("rounded-md transition transition-delay-2"),
         })
         
         self.fields['password2'].widget = forms.PasswordInput(attrs={
             'placeholder': ("Confirm password"),
-            'class': ("form-control form-control-user"),
+            'class': ("rounded-md transition transition-delay-2"),
         })
