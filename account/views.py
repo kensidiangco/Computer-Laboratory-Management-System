@@ -1,3 +1,5 @@
+from contextlib import redirect_stderr
+from urllib.robotparser import RequestRate
 from django.shortcuts import render
 from .forms import RegisterForm
 from django.contrib.auth import authenticate, login, logout
@@ -7,6 +9,7 @@ from django.urls import reverse
 from django.contrib import messages
 from .decorators import unauthenticated_user, admin_only, ITDept_only
 from django.contrib.auth.models import Group
+from .models import Theme
 
 @unauthenticated_user
 def registerPage(request):
@@ -59,28 +62,75 @@ def loginPage(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect(reverse('adminIndex'))
+                return HttpResponseRedirect(reverse('adminDashboard'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:
             messages.error(request, 'Check your password!')
             
     return render(request, './account/login.html')
+    
+def index(request):
 
+    if Theme.objects.filter(user=request.user.username).exists():
+        color = Theme.objects.get(user=request.user.username).color
+    else:
+        color = 'light'
+        
+    context = {
+        'color': color
+    }
+
+    return render(request, './index.html', context)
+
+def theme(request):
+    color = request.GET.get('color')
+
+    if color == 'dark':
+        if Theme.objects.filter(user=request.user.username).exists():
+            user_theme = Theme.objects.get(user=request.user.username)
+            user_theme.user = request.user.username
+            user_theme.color = 'dark'
+            user_theme.save()
+        else:
+            user2 = Theme(user=request.user.username, color='dark')
+            user2.save()
+
+    elif color == 'light':
+        if Theme.objects.filter(user=request.user.username).exists():
+            user_theme = Theme.objects.get(user=request.user.username)
+            user_theme.user = request.user.username
+            user_theme.color = 'light'
+            user_theme.save()
+        else:
+            user2 = Theme(user=request.user.username, color='light')
+            user2.save()
+
+    return HttpResponseRedirect(reverse('adminDashboard'))
+    
 @login_required
 @admin_only
-def adminIndex(request):
-    return render(request, './account/adminIndex.html')
+def adminDashboard(request):
+
+    if Theme.objects.filter(user=request.user.username).exists():
+        color = Theme.objects.get(user=request.user.username).color
+    else:
+        color = 'light'
+        
+    context = {
+        'color': color
+    }
+    return render(request, './account/admin/dashboard.html', context)
 
 @login_required
 @ITDept_only
-def ITDeptIndex(request):
-    return render(request, './account/ITDeptIndex.html')
+def ITDeptDashboard(request):
+    return render(request, './account/itdept/dashboard.html')
 
 @login_required
 def userLogout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('adminIndex'))
+    return HttpResponseRedirect(reverse('index'))
     
 @login_required
 def userPage(request):

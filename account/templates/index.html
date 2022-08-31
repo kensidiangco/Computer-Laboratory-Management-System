@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+    {% if color == 'light' %}
+        <link rel="stylesheet" type="text/css" href="{% static 'account/lightIndex.css' %}">
+    {% else %}
+        <link rel="stylesheet" type="text/css" href="{% static 'account/darkIndex.css' %}">
+    {% endif %}
+
+    {{color}}
+    <div class="">
+        <div class="banner-container">
+            <p class="banner-title">Computer Laboratory Management System<p>
+        </div>
+        <a href="{% url 'loginPage' %}">Login your account.</a>
+        <a href="{% url 'registerPage' %}">Register staff account.</a>
+        <a href="{% url 'ITDeptAccountRegister' %}">Register IT Dept account.</a>
+    </div>
+{% endblock content %}

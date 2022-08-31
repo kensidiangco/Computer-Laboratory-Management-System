@@ -22,7 +22,7 @@ def admin_only(view_func):
             return HttpResponseRedirect(reverse('userPage'))
             
         if group == 'IT_Dept':
-            return HttpResponseRedirect(reverse('ITDeptIndex'))
+            return HttpResponseRedirect(reverse('ITDeptDashboard'))
             
         elif group == 'admin':
             return view_func(request, *args, **kwargs)
@@ -38,7 +38,7 @@ def ITDept_only(view_func):
             return HttpResponseRedirect(reverse('userPage'))
 
         if group == 'admin':
-            return HttpResponseRedirect(reverse('adminIndex'))
+            return HttpResponseRedirect(reverse('adminDashboard'))
             
         elif group == 'IT_Dept':
             return view_func(request, *args, **kwargs)

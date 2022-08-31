@@ -1,0 +1,18 @@
+a {
+    color: black;
+    outline: none;
+    text-decoration: none;
+}
+a:hover {
+    color: black;
+}
+.banner-container{
+    padding: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.banner-title {
+    font-size: 24px;
+
+}
