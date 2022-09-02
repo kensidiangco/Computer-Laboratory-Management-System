@@ -30,7 +30,7 @@ class Professor(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 class ITDept(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ITDept')
@@ -42,11 +42,11 @@ class ITDept(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 class Theme(models.Model):
     user = models.CharField(max_length=50)
     color = models.CharField(max_length=50)
     
     def __str__(self):
-        return self.user
+        return self.user.username

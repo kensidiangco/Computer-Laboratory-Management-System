@@ -22,9 +22,10 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('CLMS.apps.account.urls')),
+    path('schedule/', include('CLMS.apps.transaction.urls')),
     path("__reload__/", include("django_browser_reload.urls")),
     
-    path('logout', views.userLogout, name='logout'),
     path('', views.index, name="index"),
+    path('logout', views.userLogout, name='logout'),
     path('user', views.userPage, name="userPage"),
 ]

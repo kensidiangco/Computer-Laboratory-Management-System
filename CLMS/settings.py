@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'CLMS.apps.account',
+    'CLMS.apps.transaction',
+    'CLMS.apps.inventory',
     'tailwind',
     'CLMS.apps.theme',
     'django_browser_reload',
@@ -57,6 +59,8 @@ LOGIN_URL = './account/login'
 LOGOUT_REDIRECT_URL = './account/profile'
 
 MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

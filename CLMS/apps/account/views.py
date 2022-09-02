@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
-from .decorators import unauthenticated_user, admin_only, ITDept_only
+from ...decorators import unauthenticated_user, admin_only, ITDept_only
 from django.contrib.auth.models import Group
 from .models import Theme
 
