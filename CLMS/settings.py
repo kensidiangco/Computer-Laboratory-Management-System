@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'account.apps.AccountConfig',
+    'CLMS.apps.account',
     'tailwind',
-    'theme',
+    'CLMS.apps.theme',
     'django_browser_reload',
 ]
 
@@ -53,8 +53,8 @@ INTERNAL_IPS = [
 
 # Auth config
 AUTH_USER_MODEL = 'account.User'
-LOGIN_URL = 'account/login'
-LOGOUT_REDIRECT_URL = 'account/profile'
+LOGIN_URL = './account/login'
+LOGOUT_REDIRECT_URL = './account/profile'
 
 MIDDLEWARE = [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
@@ -72,7 +72,7 @@ ROOT_URLCONF = 'CLMS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,9 +135,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    BASE_DIR / 'account/static'
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
