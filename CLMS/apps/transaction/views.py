@@ -1,25 +1,28 @@
+from msilib.schema import File
 from django.shortcuts import render
-from .models import Student, Sched_Request, StudentListExcelFile
+from .models import Student, Sched_Request
 import pandas as pd
 from django.http import JsonResponse 
 from .forms import ScheduleRequestForm, StudentForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.urls import reverse_lazy
+from django.core.paginator import Paginator
 
-@login_required
+@login_required(login_url=reverse_lazy("loginPage"))
 def studentListExport(request):
-    students = Sched_Request.objects.all()
+    students = Student.objects.all()
     data = []
 
     for obj in students:
         data.append({
-            "student_no": obj.students.student_no,
-            "first_name": obj.students.first_name,
-            "last_name": obj.students.last_name,
-            "middle_name": obj.students.middle_name,
-            "email": obj.students.email,
-            "contact": obj.students.contact,
-            "address": obj.students.address,
+            "student_no": obj.student_no,
+            "first_name": obj.first_name,
+            "last_name": obj.last_name,
+            "middle_name": obj.middle_name,
+            "email": obj.email,
+            "contact": obj.contact,
+            "address": obj.address,
         })
 
     pd.DataFrame(data).to_excel('students.xlsx')
@@ -29,28 +32,37 @@ def studentListExport(request):
     })
 
 def transactionIndexPage(request):
-    students = Student.objects.all()
+    # sched = Sched_Request.objects.get(id=20)
+    # context = {
+    #     'sched': sched
+    # }
+    return render(request, './transaction/index.html')
+
+def requestList(request):
+    scheds = Sched_Request.objects.all()
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'students': students
+        'scheds': scheds,
+        'page_obj': page_obj
     }
-    return render(request, './transaction/index.html', context)
 
-@login_required
-def schedRequestPage(request):
+    return render(request, './transaction/requests.html', context)
 
+@login_required(login_url=reverse_lazy("loginPage"))
+def requestForm(request):
     if request.method == 'POST':
         schedForm = ScheduleRequestForm(request.POST)
-        file = request.POST.get('files', False)
-        studentObj = StudentListExcelFile.objects.create(
-            students = file
-        )        
-        path = str(studentObj.students)
-        print(f'{settings.BASE_DIR}/{path}')
-        df = pd.read_excel(path)
+        file = request.FILES['files']
+        df = pd.read_excel(file)
 
         if schedForm.is_valid():
             sched = schedForm.save(commit=False)
             sched.requester = request.user
+            sched.class_list = file
             sched.save()
             
             for element in df.to_dict('records'):
@@ -67,7 +79,7 @@ def schedRequestPage(request):
 
     schedForm = ScheduleRequestForm()
     studentForm = StudentForm()
-    return render(request, './transaction/schedRequest.html', {
+    return render(request, './transaction/requestForm.html', {
         'schedForm': schedForm,
-        'studentForm': studentForm
+        'studentForm': studentForm,
     })

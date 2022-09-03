@@ -8,16 +8,17 @@ class Sched_Request(models.Model):
     course = models.CharField(_("course"), max_length=50)
     year_level = models.CharField(_("year_level"), max_length=50)
     section = models.CharField(_("section"), max_length=50)
+    class_list = models.FileField(_("students"), upload_to="student/excel", null=True, blank=True)
     schedule_in = models.DateTimeField(auto_now=False, auto_now_add=False)
     schedule_out = models.DateTimeField(auto_now=False, auto_now_add=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "requested by {0}".format(self.requester.username)
+        return "Requested by {0}".format(self.requester.username)
 
 class Student(models.Model):
-    sched = models.ForeignKey(Sched_Request, verbose_name=_("sched"), on_delete=models.CASCADE, related_name='sched')
+    sched = models.ForeignKey(Sched_Request, on_delete=models.CASCADE)
     student_no = models.CharField(_("student_no"), max_length=50, null=True, blank=True)
     first_name = models.CharField(_("first_name"), max_length=50)
     last_name = models.CharField(_("last_name"), max_length=50)
@@ -27,7 +28,4 @@ class Student(models.Model):
     address = models.CharField(_("address"), max_length=100)
 
     def __str__(self):
-        return self.student_no
-
-class StudentListExcelFile(models.Model):
-    students = models.FileField(_("students"), upload_to="student/excel")
+        return "Student ID: {0}".format(self.student_no)

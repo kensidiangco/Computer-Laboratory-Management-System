@@ -3,5 +3,11 @@
 {% block content %}
 <div>
     <h1>Transaction page</h1>
+    <div class=''>
+        {% for student in sched.student_set.all %}
+            <p>{{ student.first_name }}
+            {{ student.last_name }}</p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock  %}

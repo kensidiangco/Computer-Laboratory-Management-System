@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from xml.dom.minidom import Document
 from django.contrib import admin
 from django.urls import path, include
 from CLMS.apps.account import views
@@ -26,6 +27,8 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     
     path('', views.index, name="index"),
+    path('login/', views.loginPage, name="loginPage"),
     path('logout', views.userLogout, name='logout'),
     path('user', views.userPage, name="userPage"),
-]
+    
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

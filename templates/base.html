@@ -7,11 +7,23 @@
             {% block title %}{% endblock title %}
         </title>
         {% tailwind_css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'account/base.css' %}">
+        {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'account/base.css' %}"> {% endcomment %}
     </head>
     <body>
-        {% block content  %}
-        
-        {% endblock content %}
+        {% if user.is_authenticated %}
+            <div class="p-4 mx-auto flex items-center bg-green-500 text-white border border-0 border-b-4 border-b-yellow-200 shadow-md">
+                <div class="flex gap-4 items-center w-full">
+                    <a href="{% url 'index' %}" class="text-2xl">CLMS</a>
+                    <a href="{% url 'adminDashboard' %}">Dashboard</a>
+                </div>
+                <div class="flex gap-4 float-right">
+                    <a href="#">Notification(1)</a>
+                    <a href="#">Profile</a>
+                    <button>Settings</button>
+                </div>
+            </div>
+        {% endif %}
+            {% block content  %}
+            {% endblock content %}
     </body>
 </html>

@@ -1,41 +1,44 @@
-from dataclasses import field
 from django import forms
 from .models import Sched_Request, Student
+from datetime import datetime
 
+now = datetime.now()
 class ScheduleRequestForm(forms.ModelForm):
     class Meta():
         model = Sched_Request
         fields = ('course', 'year_level', 'section', 'schedule_in', 'schedule_out')
         widgets = {
             'course': forms.TextInput(attrs={
-                'placeholder':'course',
+                'placeholder':'Course',
                 'class': 'rounded-md transition transition-delay-2',
                 'required': '',
             }),
             'year_level': forms.TextInput(attrs={
-                'placeholder':'year_level',
+                'placeholder':'Year_level',
                 'class': 'rounded-md transition transition-delay-2',
                 'autocapitalize':'none',
                 'id':'username',
             }),
             'section': forms.TextInput(attrs={
                 'type': 'text',
-                'placeholder':'section',
+                'placeholder':'Section',
                 'class': 'rounded-md transition transition-delay-2',
                 'required': '',
             }),
-            'schedule_in': forms.DateTimeInput(format='%Y-%m-%d %H:%M:%S.f', attrs={
+            'schedule_in': forms.DateTimeInput(attrs={
                 'type': 'datetime-local',
-                'placeholder':'schedule_in',
+                'placeholder':'Schedule_in',
                 'class': 'rounded-md transition transition-delay-2',
+                'min': str(now.strftime('%Y-%m-%dT%H:%M:00')),
                 'required': '',
-            }),
-            'schedule_out': forms.DateTimeInput(format='%Y-%m-%d %H:%M:%S.f', attrs={
+            }, format='%Y-%m-%d %H:%M:%S'),
+            'schedule_out': forms.DateTimeInput(attrs={
                 'type': 'datetime-local',
-                'placeholder':'schedule_out',
+                'placeholder':'Schedule_out',
                 'class': 'rounded-md transition transition-delay-2',
+                'min': str(now.strftime('%Y-%m-%dT%H:%M:00')),
                 'required': '',
-            }),
+            }, format='%Y-%m-%d %H:%M:%S'),
         }
 
 class StudentForm(forms.ModelForm):

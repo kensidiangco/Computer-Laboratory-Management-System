@@ -5,5 +5,6 @@ urlpatterns = [
     path('students/export', views.studentListExport, name="studentListExport"),
     
     path('', views.transactionIndexPage, name="transactionIndexPage"),
-    path('request', views.schedRequestPage, name="schedRequestPage"),
+    path('request/form', views.requestForm, name="requestForm"),
+    path('requests', views.requestList, name="requestList"),
 ]

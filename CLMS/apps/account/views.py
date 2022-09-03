@@ -10,8 +10,10 @@ from django.contrib import messages
 from ...decorators import unauthenticated_user, admin_only, ITDept_only
 from django.contrib.auth.models import Group
 from .models import Theme
+from ..transaction.models import Sched_Request
+from django.urls import reverse_lazy
 
-@login_required
+@login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
 def registerPage(request):
     form = RegisterForm()
@@ -33,7 +35,7 @@ def registerPage(request):
             
     return render(request, './account/register.html', { 'registerForm': form })
     
-@login_required
+@login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
 def ITDeptAccountRegister(request):
     form = RegisterForm()
@@ -110,9 +112,10 @@ def theme(request):
 
     return HttpResponseRedirect(reverse('adminDashboard'))
     
-@login_required
+@login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
 def adminDashboard(request):
+    schedReqs = Sched_Request.objects.all()
 
     if Theme.objects.filter(user=request.user.username).exists():
         color = Theme.objects.get(user=request.user.username).color
@@ -120,20 +123,21 @@ def adminDashboard(request):
         color = 'light'
         
     context = {
-        'color': color
+        'color': color,
+        'schedReqs': schedReqs
     }
     return render(request, './account/admin/dashboard.html', context)
 
-@login_required
+@login_required(login_url=reverse_lazy("loginPage"))
 @ITDept_only
 def ITDeptDashboard(request):
     return render(request, './account/itdept/dashboard.html')
 
-@login_required
+@login_required(login_url=reverse_lazy("loginPage"))
 def userLogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
     
-@login_required
+@login_required(login_url=reverse_lazy("loginPage"))
 def userPage(request):
     return render(request, './account/userPage.html')

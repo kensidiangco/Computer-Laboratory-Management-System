@@ -5,6 +5,7 @@
 {% block content %}
     <div class="flex justify-center items-center h-screen">
         <div class="p-4 bg-white rounded-md shadow-md">
+            {{m}}
             {% for message in messages %}
                 <p class="text-sm text-blue-600 py-2 text-center">{{ message }}</p>
             {% endfor %}
