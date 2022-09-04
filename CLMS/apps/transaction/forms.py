@@ -6,7 +6,7 @@ now = datetime.now()
 class ScheduleRequestForm(forms.ModelForm):
     class Meta():
         model = Sched_Request
-        fields = ('course', 'year_level', 'section', 'schedule_in', 'schedule_out')
+        fields = ('course', 'year_level', 'section', 'date_request', 'time_in', 'time_out')
         widgets = {
             'course': forms.TextInput(attrs={
                 'placeholder':'Course',
@@ -25,20 +25,25 @@ class ScheduleRequestForm(forms.ModelForm):
                 'class': 'rounded-md transition transition-delay-2',
                 'required': '',
             }),
-            'schedule_in': forms.DateTimeInput(attrs={
-                'type': 'datetime-local',
+            'date_request': forms.DateTimeInput(attrs={
+                'type': 'date',
                 'placeholder':'Schedule_in',
                 'class': 'rounded-md transition transition-delay-2',
-                'min': str(now.strftime('%Y-%m-%dT%H:%M:00')),
+                'min': str(now.strftime('%Y-%m-%d')),
                 'required': '',
-            }, format='%Y-%m-%d %H:%M:%S'),
-            'schedule_out': forms.DateTimeInput(attrs={
-                'type': 'datetime-local',
+            }, format='%Y-%m-%d'),
+            'time_in': forms.DateTimeInput(attrs={
+                'type': 'time',
                 'placeholder':'Schedule_out',
                 'class': 'rounded-md transition transition-delay-2',
-                'min': str(now.strftime('%Y-%m-%dT%H:%M:00')),
                 'required': '',
-            }, format='%Y-%m-%d %H:%M:%S'),
+            }),
+            'time_out': forms.DateTimeInput(attrs={
+                'type': 'time',
+                'placeholder':'Schedule_out',
+                'class': 'rounded-md transition transition-delay-2',
+                'required': '',
+            }),
         }
 
 class StudentForm(forms.ModelForm):

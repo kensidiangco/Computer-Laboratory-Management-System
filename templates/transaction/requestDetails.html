@@ -1,0 +1,63 @@
+{% extends '../base.html' %}
+{% block title %}Schedule{% endblock  %}
+{% block content %}
+<div class="py-4 mx-10 h-screen">
+    <p class="text-2xl text-gray-600">Request details</p>
+    <div class="flex gap-6 justify-center my-10">
+        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+            <p class="text-sm text-gray-900">Requested by</p>
+            <p class="text-xl">{{ requestDetails.requester }}</p>
+        </div>
+        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+            <p class="text-sm text-gray-900">Date Request</p>
+            <p class="">{{ requestDetails.time_in }}</p>
+        </div>
+        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+            <p class="text-sm text-gray-900">Time In Request</p>
+            <p class="">{{ requestDetails.time_in }}</p>
+        </div>
+        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+            <p class="text-sm text-gray-900">Time Out Request</p>
+            <p class="">{{ requestDetails.time_out }}</p>
+        </div>
+    </div>
+    <div class="flex justify-center items-center">
+        <div class="bg-white rounded-md shadow-md">
+            <table class="border-separate rounded-md shadow-md">
+                <tr class="border boreder-2 text-white bg-green-500 transition transition-delay-1">
+                    <th class="p-2 rounded-md">STUDENT NO.</th>
+                    <th class="p-2 rounded-md">LAST NAME</th>
+                    <th class="p-2 rounded-md">FIRST NAME</th>
+                    <th class="p-2 rounded-md">MIDDLE NAME</th>
+                    <th class="p-2 rounded-md">CONTACT</th>
+                    <th class="p-2 rounded-md">ADDRESS</th>
+                </tr>
+                {% for sched in page_obj %}
+                <tr class="hover:bg-gray-200 cursor-pointer transition transition-delay-1">
+                    <td class="p-2">{{ sched.student_no }}</td>
+                    <td class="p-2">{{ sched.first_name|upper }}</td>
+                    <td class="p-2">{{ sched.last_name|upper }}</td>
+                    <td class="p-2">{{ sched.middle_name|upper }}</td>
+                    <td class="p-2">{{ sched.contact }}</td>
+                    <td class="p-2">{{ sched.address|upper }}</td>
+                    
+                </tr>
+                {% endfor %}
+            </table>
+            <div class="flex gap-2 items-center mx-2">
+                <p class="px-4 py-2 float-left text-md text-green-600">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</p>
+                <div class="flex gap-2 justify-end">
+
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Prev</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Last &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock  %}

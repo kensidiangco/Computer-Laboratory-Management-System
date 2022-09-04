@@ -111,6 +111,11 @@ def theme(request):
             user2.save()
 
     return HttpResponseRedirect(reverse('adminDashboard'))
+
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_only
+def formPage(request):
+    return render(request, './account/forms.html')
     
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_only

@@ -32,25 +32,7 @@ def studentListExport(request):
     })
 
 def transactionIndexPage(request):
-    # sched = Sched_Request.objects.get(id=20)
-    # context = {
-    #     'sched': sched
-    # }
     return render(request, './transaction/index.html')
-
-def requestList(request):
-    scheds = Sched_Request.objects.all()
-    paginator = Paginator(scheds, 5)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'scheds': scheds,
-        'page_obj': page_obj
-    }
-
-    return render(request, './transaction/requests.html', context)
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def requestForm(request):
@@ -83,3 +65,29 @@ def requestForm(request):
         'schedForm': schedForm,
         'studentForm': studentForm,
     })
+
+def requestList(request):
+    scheds = Sched_Request.objects.all()
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj
+    }
+
+    return render(request, './transaction/requests.html', context)
+
+@login_required(login_url=reverse_lazy("loginPage"))
+def requestDetails(request, pk):
+    requestDetails = Sched_Request.objects.get(pk=pk)
+    students = requestDetails.student_set.all()
+    paginator = Paginator(students, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+
+    return render(request, './transaction/requestDetails.html', {'requestDetails': requestDetails, 'page_obj': page_obj})
