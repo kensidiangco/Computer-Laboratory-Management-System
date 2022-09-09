@@ -88,3 +88,8 @@ class StudentForm(forms.ModelForm):
                 'required': '',
             })
         }
+
+class SchedStatusForm(forms.ModelForm):
+    class Meta():
+        model = Sched_Request
+        fields = ('status',)

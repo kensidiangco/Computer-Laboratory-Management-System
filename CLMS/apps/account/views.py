@@ -120,7 +120,9 @@ def formPage(request):
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
 def adminDashboard(request):
-    schedReqs = Sched_Request.objects.all()
+    pending = Sched_Request.objects.filter(status="Pending")
+    approved = Sched_Request.objects.filter(status="Approved")
+    rejected = Sched_Request.objects.filter(status="Rejected")
 
     if Theme.objects.filter(user=request.user.username).exists():
         color = Theme.objects.get(user=request.user.username).color
@@ -129,7 +131,9 @@ def adminDashboard(request):
         
     context = {
         'color': color,
-        'schedReqs': schedReqs
+        'pending': pending,
+        'approved': approved,
+        'rejected': rejected
     }
     return render(request, './account/admin/dashboard.html', context)
 

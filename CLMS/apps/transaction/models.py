@@ -12,6 +12,8 @@ class Sched_Request(models.Model):
     date_request = models.DateField(auto_now=False, auto_now_add=False)
     time_in = models.TimeField(auto_now=False, auto_now_add=False)
     time_out = models.TimeField(auto_now=False, auto_now_add=False)
+    status = models.CharField(_("status"), max_length=50, default="Pending")
+    notif_status = models.CharField(_("notif_status"), max_length=50, default="unread")
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
@@ -30,3 +32,15 @@ class Student(models.Model):
 
     def __str__(self):
         return "Student ID: {0}".format(self.student_no)
+
+class Approved_Schedule(models.Model):
+    approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sched = models.OneToOneField(Sched_Request, verbose_name=_("sched"), on_delete=models.CASCADE)
+    date_approved = models.DateTimeField(auto_now=True)
+    date_updated = models.DateTimeField(auto_now_add=True)
+
+class Rejected_Schedule(models.Model):
+    rejected_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sched = models.OneToOneField(Sched_Request, verbose_name=_("sched"), on_delete=models.CASCADE)
+    date_approved = models.DateTimeField(auto_now=True)
+    date_updated = models.DateTimeField(auto_now_add=True)

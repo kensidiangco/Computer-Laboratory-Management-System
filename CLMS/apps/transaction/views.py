@@ -1,9 +1,9 @@
 from msilib.schema import File
-from django.shortcuts import render
-from .models import Student, Sched_Request
+from django.shortcuts import render, get_object_or_404
+from .models import Approved_Schedule, Rejected_Schedule, Student, Sched_Request
 import pandas as pd
 from django.http import JsonResponse 
-from .forms import ScheduleRequestForm, StudentForm
+from .forms import SchedStatusForm, ScheduleRequestForm, StudentForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.urls import reverse_lazy
@@ -67,7 +67,7 @@ def requestForm(request):
     })
 
 def requestList(request):
-    scheds = Sched_Request.objects.all()
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('id')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
@@ -78,16 +78,32 @@ def requestList(request):
         'page_obj': page_obj
     }
 
-    return render(request, './transaction/requests.html', context)
+    return render(request, './transaction/requestList.html', context)
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def requestDetails(request, pk):
-    requestDetails = Sched_Request.objects.get(pk=pk)
-    students = requestDetails.student_set.all()
-    paginator = Paginator(students, 5)
+    requestDetails = get_object_or_404(Sched_Request, pk=pk)
 
+    students = requestDetails.student_set.all().order_by("last_name")
+    paginator = Paginator(students, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
+    
+    if request.method == 'POST':
+        if 'approve_sched' in request.POST:
+            Approved_Schedule.objects.create(
+                approved_by = request.user,
+                sched = Sched_Request.objects.get(pk=pk)
+            )
+            requestDetails.status="Approved"
+            requestDetails.save()
+        
+        if 'reject_sched' in request.POST:
+            Rejected_Schedule.objects.create(
+                approved_by = request.user,
+                sched = Sched_Request.objects.get(pk=pk)
+            )
+            requestDetails.status="Rejected"
+            requestDetails.save()
 
     return render(request, './transaction/requestDetails.html', {'requestDetails': requestDetails, 'page_obj': page_obj})
