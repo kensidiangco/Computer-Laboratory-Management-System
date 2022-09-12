@@ -54,7 +54,6 @@ INTERNAL_IPS = [
 ]
 
 # Auth config
-AUTH_USER_MODEL = 'account.User'
 LOGIN_URL = './account/login'
 LOGOUT_REDIRECT_URL = './account/profile'
 

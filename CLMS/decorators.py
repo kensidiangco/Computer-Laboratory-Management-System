@@ -18,7 +18,7 @@ def admin_only(view_func):
         if request.user.groups.exists():
             group = request.user.groups.all()[0].name
             
-        if group == 'user':
+        if group == 'staff':
             return HttpResponseRedirect(reverse('userPage'))
             
         if group == 'IT_Dept':
@@ -34,7 +34,7 @@ def ITDept_only(view_func):
         if request.user.groups.exists():
             group = request.user.groups.all()[0].name
             
-        if group == 'user':
+        if group == 'staff':
             return HttpResponseRedirect(reverse('userPage'))
 
         if group == 'admin':

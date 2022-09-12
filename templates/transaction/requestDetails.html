@@ -2,9 +2,9 @@
 {% block title %}Schedule{% endblock  %}
 {% block content %}
 <div class="py-4 mx-10">
-    <p class="text-2xl text-gray-600">Request details</p>
+    <p class="text-2xl text-gray-600 p-4">Request details</p>
 
-    {% if requestDetails.status == "Pending" %}
+    {% if requestDetails.status == "Pending" and 'IT_Dept' in group %}
         <div class="float-right flex gap-4">
             <form method="POST">
                 {% csrf_token %}
@@ -16,6 +16,24 @@
             </form>
         </div></br>
     {% endif %}
+
+    {% if requestDetails.requester == request.user and requestDetails.status == 'Approved'  %}
+    <div class="float-right flex gap-4">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" class="text-gray-600 p-2 bg-white border border-1 border-green-500 rounded-md hover:bg-gray-100 cursor-pointer" name="timein" value="START TIME SCHEDULE" />
+        </form>
+        </div></br>
+    {% endif %}
+
+    {% if requestDetails.requester == request.user and requestDetails.status == 'On going'  %}
+    <div class="float-right flex gap-4">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" class="text-gray-600 p-2 bg-white border border-1 border-red-500 rounded-md hover:bg-gray-100 cursor-pointer" name="timeout" value="STOP TIME SCHEDULE" />
+        </form>
+    </div></br>
+    {% endif %}
     
     <div class="flex gap-6 justify-center my-10">
         <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
@@ -23,7 +41,7 @@
             <p class="text-xl">{{ requestDetails.requester }}</p>
         </div>
         <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
-            <p class="text-sm text-gray-900">Date Request</p>
+            <p class="text-sm text-gray-900">Request Date</p>
             <p class="text-xl">{{ requestDetails.date_request }}</p>
         </div>
         <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
@@ -36,7 +54,15 @@
         </div>
         <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
             <p class="text-sm text-gray-900">STATUS</p>
-            <p class="text-xl">{{ requestDetails.status }}</p>
+            {% if requestDetails.status == 'Approved' %}
+                <p class="text-xl text-green-600">{{ requestDetails.status|upper }}</p>
+            {% elif requestDetails.status == 'Rejected' %}
+                <p class="text-xl text-red-600">{{ requestDetails.status|upper }}</p>
+            {% elif requestDetails.status == 'Done' %}
+                <p class="text-xl text-green-600">{{ requestDetails.status|upper }}</p>
+            {% else %}
+                <p class="text-xl text-blue-600">{{ requestDetails.status|upper }}</p>
+            {% endif %}
         </div>
     </div>
     <div class="flex justify-center items-center">
@@ -75,6 +101,7 @@
                     {% endif %}
                 </div>
             </div>
+        </div>
     </div>
 </div>
 {% endblock  %}

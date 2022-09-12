@@ -12,6 +12,7 @@ from django.contrib.auth.models import Group
 from .models import Theme
 from ..transaction.models import Sched_Request
 from django.urls import reverse_lazy
+from django.core.paginator import Paginator
 
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
@@ -24,7 +25,7 @@ def registerPage(request):
             user = form.save(commit=False)
             username = form.cleaned_data.get('username')
             user.save()
-            group = Group.objects.get(name='user')
+            group = Group.objects.get(name='staff')
             user.groups.add(group)
             
             messages.success(request, 'Account successfully created for ' + username)
@@ -66,7 +67,7 @@ def loginPage(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect(reverse('adminDashboard'))
+                return HttpResponseRedirect(reverse('index'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:
@@ -123,6 +124,8 @@ def adminDashboard(request):
     pending = Sched_Request.objects.filter(status="Pending")
     approved = Sched_Request.objects.filter(status="Approved")
     rejected = Sched_Request.objects.filter(status="Rejected")
+    onGoing = Sched_Request.objects.filter(status="On going")
+    done = Sched_Request.objects.filter(status="Done")
 
     if Theme.objects.filter(user=request.user.username).exists():
         color = Theme.objects.get(user=request.user.username).color
@@ -133,14 +136,34 @@ def adminDashboard(request):
         'color': color,
         'pending': pending,
         'approved': approved,
-        'rejected': rejected
+        'rejected': rejected,
+        'onGoing': onGoing,
+        'done': done
     }
     return render(request, './account/admin/dashboard.html', context)
 
 @login_required(login_url=reverse_lazy("loginPage"))
 @ITDept_only
 def ITDeptDashboard(request):
-    return render(request, './account/itdept/dashboard.html')
+
+    pending = Sched_Request.objects.filter(status="Pending")
+    approved = Sched_Request.objects.filter(status="Approved")
+    rejected = Sched_Request.objects.filter(status="Rejected")
+
+    # group = list(request.user.groups.values_list('name',flat = True))
+
+    if Theme.objects.filter(user=request.user.username).exists():
+        color = Theme.objects.get(user=request.user.username).color
+    else:
+        color = 'light'
+        
+    context = {
+        'color': color,
+        'pending': pending,
+        'approved': approved,
+        'rejected': rejected,
+    }
+    return render(request, './account/itdept/dashboard.html', context)
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def userLogout(request):
@@ -149,4 +172,10 @@ def userLogout(request):
     
 @login_required(login_url=reverse_lazy("loginPage"))
 def userPage(request):
-    return render(request, './account/userPage.html')
+    sched = Sched_Request.objects.filter(requester=request.user)
+
+    paginator = Paginator(sched, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, './account/userPage.html', {'sched': sched, 'page_obj': page_obj})
