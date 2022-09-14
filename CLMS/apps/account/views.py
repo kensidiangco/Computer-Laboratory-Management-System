@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.contrib import messages
 from ...decorators import unauthenticated_user, admin_only, ITDept_only
 from django.contrib.auth.models import Group
-from .models import Theme
+from .models import Theme, Profile, Notification
 from ..transaction.models import Sched_Request
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -75,6 +75,9 @@ def loginPage(request):
             
     return render(request, './account/login.html')
 
+def profile(request):
+    return render(request, './account/profile.html')
+
 def index(request):
 
     if Theme.objects.filter(user=request.user.username).exists():
@@ -114,7 +117,6 @@ def theme(request):
     return HttpResponseRedirect(reverse('adminDashboard'))
 
 @login_required(login_url=reverse_lazy("loginPage"))
-@admin_only
 def formPage(request):
     return render(request, './account/forms.html')
     

@@ -16,6 +16,14 @@ class Profile(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     
+class Notification(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sender")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receiver")
+    description = models.CharField(_("description"), max_length=100)
+    notif_for = models.CharField(_("notif_for"), max_length=50)
+    read = models.BooleanField(_("read"), default=False)
+    date_created = models.DateTimeField(_("date_created"), auto_now=True)
+
 class Theme(models.Model):
     user = models.CharField(max_length=50)
     color = models.CharField(max_length=50)

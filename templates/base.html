@@ -15,18 +15,65 @@
                 <div class="flex gap-4 items-center w-full">
                     <a href="{% url 'index' %}" class="text-2xl">CLMS</a>
                     <a href="{% url 'adminDashboard' %}">Dashboard</a>
-                    {% if request.user.username == 'admin' %}
-                        <a href="{% url 'formPage' %}">Forms</a>
-                    {% endif %}
+                    <a href="{% url 'formPage' %}">Forms</a>
                 </div>
-                <div class="flex gap-4 float-right">
-                    <a href="#">Notification(1)</a>
-                    <a href="#">Profile</a>
-                    <button>Settings</button>
+                <div class="hidden md:flex gap-4 float-right">
+                    {% if notification_count.count <= 0 %}
+                    <button id="notification" onClick="notifClicked()">Notification</button>
+                    <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button>
+                    {% else %}
+                    <button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm">{{notification_count.count}}</span></button>
+                    <button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm">{{notification_count.count}}</span></button>
+                    {% endif %}
+                    <a href="{% url 'profile' %}">Profile</a>
+                    {% comment %} <button>Settings</button> {% endcomment %}
                 </div>
             </div>
-        {% endif %}
+            <div id="notif-modal" class="hidden absolute flex flex-col bg-white p-4 right-7 top-12 mr-10 rounded-md shadow-md">
+                {% if notification_count.count <= 0 %}
+                    <div>
+                        <p class="text-sm float-right text-gray-500">No data to show.</p>
+                    </div>
+                {% else %}
+                    <div>
+                        <p class="text-sm float-right text-blue-500 cursor-pointer">Mark all as read</p>
+                    </div>
+                {% endif %}
+                {% for notif in notifications  %}
+                    {% if notif.read == True %}
+                        <li class="py-1 list-none bg-red-300 rounded-md">{{notif.description}} by {{notif.sender}}</li>
+                    {% else %}
+                        <li class="py-1 list-none">{{notif.description}} by {{notif.sender}}</li>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
             {% block content  %}
             {% endblock content %}
     </body>
+
+    <script>
+        var notifButton = document.getElementById("notification")
+        var notifButton2 = document.getElementById("notification2")
+        var notifModal = document.getElementById("notif-modal")
+
+        function notifClicked() {
+            notifButton.classList.add('hidden');
+            notifButton2.classList.remove('hidden');
+            notifModal.classList.remove('hidden');
+        };
+
+        function notifClicked2() {
+            notifButton.classList.remove('hidden');
+            notifButton2.classList.add('hidden');
+            notifModal.classList.add('hidden');
+        };
+
+        document.addEventListener('mouseup', function(e) {
+            if (!notifModal.contains(e.target)) {
+                notifModal.classList.add('hidden');
+            }
+        });
+    </script>
 </html>

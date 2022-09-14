@@ -1,6 +1,9 @@
 from datetime import datetime
 from msilib.schema import File
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseRedirect, HttpResponse
+
+from CLMS.apps.account.models import Notification
 from .models import Approved_Schedule, Rejected_Schedule, Student, Sched_Request, Sched_Time_Usage
 import pandas as pd
 from django.http import JsonResponse 
@@ -9,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def studentListExport(request):
@@ -47,6 +51,13 @@ def requestForm(request):
             sched.requester = request.user
             sched.class_list = file
             sched.save()
+
+            Notification.objects.create(
+                receiver=User.objects.get(username='ken'),
+                sender=request.user,
+                notif_for='schedule',
+                description='New schedule request'
+            )
             
             for element in df.to_dict('records'):
                 Student.objects.create(
@@ -59,6 +70,8 @@ def requestForm(request):
                     email= element['email'],
                     address= element['address']
                 )
+
+            return redirect('requestDetails', pk=sched.pk)
 
     schedForm = ScheduleRequestForm()
     studentForm = StudentForm()
@@ -92,39 +105,69 @@ def requestDetails(request, pk):
     page_obj = paginator.get_page(page_number)
 
     approvedId = Approved_Schedule.objects.filter(sched=requestDetails)
-    
+
     if request.method == 'POST':
         if 'approve_sched' in request.POST:
+            sched = Sched_Request.objects.get(pk=pk)
             Approved_Schedule.objects.create(
                 approved_by = request.user,
-                sched = Sched_Request.objects.get(pk=pk)
+                sched = sched
             )
             requestDetails.status="Approved"
             requestDetails.save()
+
+            Notification.objects.create(
+                receiver=User.objects.get(username=sched.requester.username),
+                sender=request.user,
+                notif_for='schedule',
+                description='Your request for {} is approved'.format(sched.date_request)
+            )
         
         if 'reject_sched' in request.POST:
+            sched = Sched_Request.objects.get(pk=pk)
             Rejected_Schedule.objects.create(
                 rejected_by = request.user,
-                sched = Sched_Request.objects.get(pk=pk)
+                sched = sched
             )
             requestDetails.status="Rejected"
             requestDetails.save()
         
+            Notification.objects.create(
+                receiver=User.objects.get(username=sched.requester.username),
+                sender=request.user,
+                notif_for='schedule',
+                description='Your request for {} is approved'.format(sched.date_request)
+            )
+
         if 'timein' in request.POST:
+            Sched_Time_Usage.objects.create(
+                sched = approvedId.first()
+            )
+            
             requestDetails.status="On going"
             requestDetails.save()
 
-            Sched_Time_Usage.objects.create(
-                sched = approvedId.last()
+            Notification.objects.create(
+                receiver=User.objects.get(username='ken'),
+                sender=request.user,
+                notif_for='schedule',
+                description='{} has occupied comlab as of {}'.format(request.user, datetime.now().strftime("%B %d, %Y at %H:%M"))
             )
         
         if 'timeout' in request.POST:
+            Sched_Time_Usage.objects.create(
+                sched = approvedId.first(),
+                time_out = datetime.now().time()
+            )
+
             requestDetails.status="Done"
             requestDetails.save()
 
-            Sched_Time_Usage.objects.create(
-                sched = approvedId.last(),
-                time_out = datetime.now().time()
+            Notification.objects.create(
+                receiver=User.objects.get(username='ken'),
+                sender=request.user,
+                notif_for='schedule',
+                description='{} left the comlab at {}'.format(request.user, datetime.now().strftime("%H:%M"))
             )
 
     return render(request, './transaction/requestDetails.html', {'requestDetails': requestDetails, 'page_obj': page_obj, 'group': group})
