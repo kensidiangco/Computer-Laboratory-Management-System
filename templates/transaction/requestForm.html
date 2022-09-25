@@ -8,14 +8,15 @@
     <div class="flex justify-center">
         <div class="p-4 bg-white rounded-md shadow-md">
             {% for message in messages %}
-                <p class="text-sm text-blue-600 py-2 text-center">{{ message }}</p>
+            <p class="text-sm text-blue-600 py-2 text-center">{{ message }}</p>
             {% endfor %}
-            <div class="p-2">
+            <div class="flex p-2 items-center justify-between">
                 <h1 class="text-xl">Create Schedule.</h1>
+                <a href="{% url 'studentListExport' %}" class="float-right text-blue-600">Export excel</a>
             </div>
             <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-2" >
                 {% csrf_token %}
-                <label class="text-sm text-gray-900">Student list file</label>
+                <label class="text-sm text-gray-900">Import file</label>
                 <input type="file" name="files" required />
 
                 {{ schedForm.course }}

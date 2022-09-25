@@ -7,45 +7,65 @@
             {% block title %}{% endblock title %}
         </title>
         {% tailwind_css %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'account/base.css' %}"> {% endcomment %}
     </head>
     <body>
         {% if user.is_authenticated %}
-            <div class="p-4 mx-auto flex items-center bg-green-500 text-white border border-0 border-b-4 border-b-yellow-200 shadow-md">
+            <div class="p-4 mx-auto flex items-center bg-green-500 text-white border-none border-b-4 border-b-yellow-200 shadow-md">
                 <div class="flex gap-4 items-center w-full">
-                    <a href="{% url 'index' %}" class="text-2xl">CLMS</a>
+                    <a href="{% url 'index' %}" class="text-3xl">CLMS</a>
                     <a href="{% url 'adminDashboard' %}">Dashboard</a>
-                    <a href="{% url 'formPage' %}">Forms</a>
-                </div>
-                <div class="hidden md:flex gap-4 float-right">
-                    {% if notification_count.count <= 0 %}
-                    <button id="notification" onClick="notifClicked()">Notification</button>
-                    <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button>
-                    {% else %}
-                    <button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm">{{notification_count.count}}</span></button>
-                    <button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm">{{notification_count.count}}</span></button>
+                    {% if 'admin' in user_group %}
+                        <a href="{% url 'formPage' %}">Forms</a>
+                        {% elif 'prof' in user_group %}
+                        <a href="{% url 'requestForm' %}">Request Schedule</a>
                     {% endif %}
-                    <a href="{% url 'profile' %}">Profile</a>
+                </div>
+                <div class="flex gap-4 float-right">
+                    {% if notification_count.count <= 0 %}
+                        <button id="notification" onClick="notifClicked()">Notification</button>
+                        <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button>
+                    {% else %}
+                        <button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm">{{notification_count.count}}</span></button>
+                        <button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">{{notification_count.count}}</span></button>
+                    {% endif %}
+                    <button id="profile" onClick="profileClicked()">Account</button>
+                    <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>
                     {% comment %} <button>Settings</button> {% endcomment %}
                 </div>
             </div>
-            <div id="notif-modal" class="hidden absolute flex flex-col bg-white p-4 right-7 top-12 mr-10 rounded-md shadow-md">
-                {% if notification_count.count <= 0 %}
-                    <div>
-                        <p class="text-sm float-right text-gray-500">No data to show.</p>
-                    </div>
-                {% else %}
-                    <div>
-                        <p class="text-sm float-right text-blue-500 cursor-pointer">Mark all as read</p>
-                    </div>
-                {% endif %}
-                {% for notif in notifications  %}
-                    {% if notif.read == True %}
-                        <li class="py-1 list-none bg-red-300 rounded-md">{{notif.description}} by {{notif.sender}}</li>
+            <div id="notif-modal" class="hidden absolute bg-white right-7 top-12 mr-10 rounded-md shadow-md h-auto max-h-96 max-w-96 w-96 overflow-scroll scroll-smooth">
+                <div class="flex">
+                    {% if notification_count.count <= 0 %}
+                        <p class="p-4 text-sm text-center text-gray-500">No new notification.</p>
                     {% else %}
-                        <li class="py-1 list-none">{{notif.description}} by {{notif.sender}}</li>
+                        <button type="button" class="text-sm p-4 text-blue-500 cursor-pointer hover:bg-blue-100 float-right w-full text-center mark-all-read">Mark all as read</button>
                     {% endif %}
-                {% endfor %}
+                </div>
+                <span class="notif-list ">
+                    {% for notif in notifications  %}
+                        {% if notif.read == True %}
+                            <a href="{% url 'requestDetails' pk=notif.sched_url %}" class="flex flex-col p-2 text-gray-600 border-2 hover:bg-gray-100 transition transition-delay-1 cursor-pointer">
+                                <span>{{notif.description}}</span>
+                                <span class="text-sm text-gray-400">{{notif.date_created}}<span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'requestDetails' pk=notif.sched_url %}" class="flex flex-col p-2 text-black border-2 bg-yellow-300 hover:bg-yellow-200 transition transition-delay-1 cursor-pointer">
+                                <span>{{notif.description}}</span>
+                                <span class="text-sm text-gray-600">{{notif.date_created}}<span>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+            
+            <span class="ajaxRes"></span>
+            <div id="profile-modal" class="hidden absolute bg-white right-0 top-12 mr-10 rounded-md shadow-md h-auto max-w-72 w-auto overflow-hidden">
+                <span class="flex flex-col">
+                    <a href="{% url 'profile' %}" class="font-bold p-4 hover:bg-gray-100 transition transition-delay-1">View profile</a>
+                    <a href="{% url 'logout' %}" class="font-bold p-4 hover:bg-gray-100 transition transition-delay-1">Logout</a>
+                </span>
             </div>
             {% endif %}
 
@@ -58,6 +78,11 @@
         var notifButton2 = document.getElementById("notification2")
         var notifModal = document.getElementById("notif-modal")
 
+        var profileModal = document.getElementById("profile-modal")
+        var profileButton = document.getElementById("profile")
+        var profileButton2 = document.getElementById("profile2")
+
+
         function notifClicked() {
             notifButton.classList.add('hidden');
             notifButton2.classList.remove('hidden');
@@ -69,11 +94,87 @@
             notifButton2.classList.add('hidden');
             notifModal.classList.add('hidden');
         };
+        
+        function profileClicked() {
+            profileButton.classList.add('hidden');
+            profileButton2.classList.remove('hidden');
+            profileModal.classList.remove('hidden');
+        };
+
+        function profileClicked2() {
+            profileButton.classList.remove('hidden');
+            profileButton2.classList.add('hidden');
+            profileModal.classList.add('hidden');
+        };
 
         document.addEventListener('mouseup', function(e) {
             if (!notifModal.contains(e.target)) {
                 notifModal.classList.add('hidden');
+                profileModal.classList.add('hidden');
             }
         });
     </script>
+    {% if user.is_authenticated %}
+        <script>
+            $(document).ready(function() {
+                $(".ajaxRes").hide();
+                setInterval(function() {
+                    $.ajax({
+                        url: "{% url 'getNotifs' %}",
+                        dataType: 'json',
+                        beforeSend:function() {
+                            $(".ajaxRes").show();
+                            $(".ajaxRes").text();
+                        },
+                        success:function(res) {
+                            _html = '';
+                            _json = $.parseJSON(res.data);
+                            var monthNames = [
+                                "Jan.", "Feb.", "March",
+                                "Apr.", "May", "June", "July",
+                                "Aug.", "Sept.", "Oct.",
+                                "Nov.", "Dec."
+                            ];
+                            function addZero(i) {
+                                if (i < 10) {
+                                    i = "0" + i;
+                                }
+                            
+                                return i;
+                            }
+                            function get_date(date){
+                                var date = new Date(date);
+                                var day = date.getDate();
+                                var monthIndex = date.getMonth();
+                                var year = date.getFullYear();
+                                var hours = addZero(date.getHours());
+                                var minutes = addZero(date.getMinutes());
+                            
+                                return monthNames[monthIndex] + " " + day + " " + year;
+                            }
+
+                            $.each(_json, function(index, d) {
+                                if(d.fields.read){
+                                    _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-600 border-2 hover:bg-gray-100 transition transition-delay-1 cursor-pointer"><span>'+ d.fields.description +'</span> <span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span></a>';
+                                }else {
+                                    _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-700 border-2 bg-yellow-300 hover:bg-yellow-200 transition transition-delay-1 cursor-pointer"><span>'+ d.fields.description +'</span> <span class="text-sm text-gray-600">'+ get_date(d.fields.date_created) +'<span></a>';
+                                }
+                            });
+        
+                            $('.notif-list').html(_html);
+                            $(".ajaxRes").hide();
+                        }
+                    })
+                }, 3000)
+            });
+
+            $(document).on("click", ".mark-all-read", function() {
+
+                $.ajax({
+                    url: "{% url 'clearNotification' %}"
+                });
+            });
+            
+        </script>
+    {% endif %}
 </html>

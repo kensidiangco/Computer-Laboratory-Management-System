@@ -1,18 +1,17 @@
 {% extends '../base.html' %}
 {% block title %}Schedule{% endblock  %}
 {% block content %}
-<div class="py-4 mx-10">
+<div class="min-h-screen h-full pb-12 mx-10">
     <p class="text-2xl text-gray-600 p-4">Request details</p>
-
-    {% if requestDetails.status == "Pending" and 'IT_Dept' in group %}
+    {% if requestDetails.status == "Pending" and 'dean' in group %}
         <div class="float-right flex gap-4">
             <form method="POST">
                 {% csrf_token %}
-                <input type="submit" class="text-gray-600 p-2 bg-white border border-1 border-green-500 rounded-md hover:bg-gray-100 cursor-pointer" name="approve_sched" value="Approve" />
+                <input type="submit" class="text-white p-2 px-4 bg-green-500 cursor-pointer border border-1 border-green-500 rounded-md hover:bg-green-400 transition transition-delay-1" name="approve_sched" value="Approve" />
             </form>
             <form method="POST">
                 {% csrf_token %}
-                <input type="submit" class="text-gray-600 p-2 bg-white border border-1 border-red-500 rounded-md hover:bg-gray-100 cursor-pointer" name="reject_sched" value="Reject" />
+                <input type="submit" class="p-2 px-4 bg-red-500 text-white cursor-pointer border border-1 border-red-500 rounded-md hover:bg-red-400 transition transition-delay-1" name="reject_sched" value="Reject" />
             </form>
         </div></br>
     {% endif %}
@@ -21,38 +20,59 @@
     <div class="float-right flex gap-4">
         <form method="POST">
             {% csrf_token %}
-            <input type="submit" class="text-gray-600 p-2 bg-white border border-1 border-green-500 rounded-md hover:bg-gray-100 cursor-pointer" name="timein" value="START TIME SCHEDULE" />
+            <input type="submit" class="text-white p-2 px-4 bg-green-500 cursor-pointer border border-1 border-green-500 rounded-md hover:bg-green-400 transition transition-delay-1" name="timein" value="START TIME SCHEDULE" />
         </form>
         </div></br>
     {% endif %}
 
-    {% if requestDetails.requester == request.user and requestDetails.status == 'On going'  %}
+    {% if requestDetails.requester == request.user and requestDetails.status == 'On Going'  %}
     <div class="float-right flex gap-4">
         <form method="POST">
             {% csrf_token %}
-            <input type="submit" class="text-gray-600 p-2 bg-white border border-1 border-red-500 rounded-md hover:bg-gray-100 cursor-pointer" name="timeout" value="STOP TIME SCHEDULE" />
+            <input type="submit" class="text-white p-2 px-4 bg-green-500 cursor-pointer border border-1 border-green-500 rounded-md hover:bg-green-400 transition transition-delay-1" name="timeout" value="STOP TIME SCHEDULE" />
         </form>
     </div></br>
     {% endif %}
     
-    <div class="flex gap-6 justify-center my-10">
-        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+    <div class="flex flex-wrap mx-28 gap-6 justify-center my-10">
+        <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
+            <p class="text-sm text-gray-900">Date created</p>
+            <p class="text-xl">{{ requestDetails.date_created }}</p>
+        </div>
+        <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
             <p class="text-sm text-gray-900">Requested by</p>
             <p class="text-xl">{{ requestDetails.requester }}</p>
         </div>
-        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+        <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
             <p class="text-sm text-gray-900">Request Date</p>
             <p class="text-xl">{{ requestDetails.date_request }}</p>
         </div>
-        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+        <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
             <p class="text-sm text-gray-900">Time In Request</p>
             <p class="text-xl">{{ requestDetails.time_in }}</p>
         </div>
-        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+        <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
             <p class="text-sm text-gray-900">Time Out Request</p>
             <p class="text-xl">{{ requestDetails.time_out }}</p>
         </div>
-        <div class="p-4 bg-white rounded-md shadow-md border border-0 border-l-8 border-green-600 cursor-pointer">
+        {% if time_usage.time_in == null %}
+        {% else %}
+            <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
+                <p class="text-sm text-gray-900">Time in</p>
+                <p class="text-xl">{{ time_usage.time_in }}</p>
+            </div>
+        {% endif %}
+
+        {% if time_usage.time_out == null %}
+        {% else %}
+            <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
+                <p class="text-sm text-gray-900">Time Out</p>
+                <p class="text-xl">
+                    {{ time_usage.time_out }}
+                </p>
+            </div>
+            {% endif %}
+        <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-green-600">
             <p class="text-sm text-gray-900">STATUS</p>
             {% if requestDetails.status == 'Approved' %}
                 <p class="text-xl text-green-600">{{ requestDetails.status|upper }}</p>
@@ -77,7 +97,7 @@
                     <th class="p-2 rounded-md">ADDRESS</th>
                 </tr>
                 {% for sched in page_obj %}
-                <tr class="hover:bg-gray-200 cursor-pointer transition transition-delay-1">
+                <tr class="hover:bg-gray-200 transition transition-delay-1">
                     <td class="p-2">{{ sched.student_no }}</td>
                     <td class="p-2">{{ sched.last_name|upper }}</td>
                     <td class="p-2">{{ sched.first_name|upper }}</td>

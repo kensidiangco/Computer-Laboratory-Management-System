@@ -21,14 +21,16 @@
                 <p class="text-3xl font-bold">Computer Laboratory Management System<p>
                 {% if request.user.is_authenticated %}
                     <a href="{% url 'adminDashboard' %}" class="p-4 bg-purple-600 text-white rounded-md shadow-sm">Dashboard<a>
-                    <a class="p-4 bg-purple-600 text-white rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
+                    {% if 'prof' in user_group %}
+                        <a class="p-4 bg-purple-600 text-white rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
+                    {% endif %}
                     {% else %}
                     <a class="p-4 bg-purple-600 text-white rounded-md shadow-sm" href="{% url 'loginPage' %}">Login to your account</a>
                     <a class="p-4 bg-purple-600 text-white rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
                 {% endif %}
             </div>
             {% comment %} <a href="{% url 'loginPage' %}">Login your account.</a>
-            <a href="{% url 'registerPage' %}">Register staff account.</a>
+            <a href="{% url 'registerPage' %}">Register prof account.</a>
             <a href="{% url 'ITDeptAccountRegister' %}">Register IT Dept account.</a> {% endcomment %}
         </div>
     </body>

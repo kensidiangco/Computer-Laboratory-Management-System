@@ -8,16 +8,22 @@
         <div class="flex flex-col gap-4 items-center">
             <div class="p-6 bg-white flex flex-col gap-4 rounded-xl shadow-md border border-0 border-l-8 border-l-green-600 border-t-green-600">
                 {% if request.user.username == 'admin' %}
-                    <div class="p-4 bg-gray-900 rounded-md shadow-md w-80">
-                        <a href="{% url 'ITDeptAccountRegister' %}">Create acount for IT Department</a>
-                    </div>
-                    <div class="p-4 bg-gray-900 rounded-md shadow-md w-80">
-                        <a href="{% url 'registerPage' %}">Create an account for staff</a>
-                    </div>
+                    <a href="{% url 'ITDeptAccountRegister' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                        Create acount for IT Department
+                    </a>
+
+                    <a href="{% url 'profRegisterPage' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                        Create an account for Professor
+                    </a>
+
+                    <a href="{% url 'deanRegisterPage' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                        Create an account for Dean
+                    </a>
+
                 {% else %}
-                    <div class="p-4 bg-gray-900 rounded-md shadow-md w-80">
-                        <a href="{% url 'requestForm' %}">Request new schedule</a>
-                    </div>
+                    <a href="{% url 'requestForm' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                        Request new schedule
+                    </a>
                 {% endif %}
             </div>
         </div>

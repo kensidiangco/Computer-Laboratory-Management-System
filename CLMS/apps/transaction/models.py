@@ -17,8 +17,12 @@ class Sched_Request(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('-date_created',)
+
     def __str__(self):
         return "Requested by {0}".format(self.requester.username)
+
 class Student(models.Model):
     sched = models.ForeignKey(Sched_Request, on_delete=models.CASCADE)
     student_no = models.CharField(_("student_no"), max_length=50)
@@ -34,20 +38,29 @@ class Student(models.Model):
 
 class Approved_Schedule(models.Model):
     approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    sched = models.ForeignKey(Sched_Request, verbose_name=_("sched"), on_delete=models.CASCADE)
+    sched = models.OneToOneField(Sched_Request, verbose_name=_("sched"), on_delete=models.CASCADE)
     date_approved = models.DateTimeField(auto_now=True)
     date_updated = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ('-date_approved',)
+
 class Rejected_Schedule(models.Model):
     rejected_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    sched = models.ForeignKey(Sched_Request, verbose_name=_("sched"), on_delete=models.CASCADE)
+    sched = models.OneToOneField(Sched_Request, verbose_name=_("sched"), on_delete=models.CASCADE)
     description = models.CharField(_("description"), max_length=100, null=True, blank=True)
     date_approved = models.DateTimeField(auto_now=True)
     date_updated = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ('-date_approved',)
+
 class Sched_Time_Usage(models.Model):
-    sched = models.ForeignKey(Approved_Schedule, verbose_name=_("sched"), on_delete=models.CASCADE)
-    time_in = models.TimeField(auto_now_add=True)
+    sched = models.OneToOneField(Approved_Schedule, verbose_name=_("sched"), on_delete=models.CASCADE)
+    time_in = models.TimeField(null=True, blank=True)
     time_out = models.TimeField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-date_created',)

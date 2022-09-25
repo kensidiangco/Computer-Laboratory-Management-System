@@ -23,6 +23,7 @@ class Notification(models.Model):
     notif_for = models.CharField(_("notif_for"), max_length=50)
     read = models.BooleanField(_("read"), default=False)
     date_created = models.DateTimeField(_("date_created"), auto_now=True)
+    sched_url = models.CharField(_("sched_url"), max_length=50, null=True, blank=True)
 
 class Theme(models.Model):
     user = models.CharField(max_length=50)

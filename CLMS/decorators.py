@@ -18,11 +18,14 @@ def admin_only(view_func):
         if request.user.groups.exists():
             group = request.user.groups.all()[0].name
             
-        if group == 'staff':
-            return HttpResponseRedirect(reverse('userPage'))
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('profDashboard'))
             
         if group == 'IT_Dept':
             return HttpResponseRedirect(reverse('ITDeptDashboard'))
+
+        if group == 'dean':
+            return HttpResponseRedirect(reverse('deanDashboard'))
             
         elif group == 'admin':
             return view_func(request, *args, **kwargs)
@@ -34,12 +37,53 @@ def ITDept_only(view_func):
         if request.user.groups.exists():
             group = request.user.groups.all()[0].name
             
-        if group == 'staff':
-            return HttpResponseRedirect(reverse('userPage'))
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('profDashboard'))
 
         if group == 'admin':
             return HttpResponseRedirect(reverse('adminDashboard'))
+        
+        if group == 'dean':
+            return HttpResponseRedirect(reverse('deanDashboard'))
             
         elif group == 'IT_Dept':
+            return view_func(request, *args, **kwargs)
+    return wrapper
+
+def prof_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+            
+        if group == 'IT_Dept':
+            return HttpResponseRedirect(reverse('ITDeptDashboard'))
+
+        if group == 'admin':
+            return HttpResponseRedirect(reverse('adminDashboard'))
+        
+        if group == 'dean':
+            return HttpResponseRedirect(reverse('deanDashboard'))
+            
+        elif group == 'prof':
+            return view_func(request, *args, **kwargs)
+    return wrapper
+
+def dean_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+            
+        if group == 'IT_Dept':
+            return HttpResponseRedirect(reverse('ITDeptDashboard'))
+
+        if group == 'admin':
+            return HttpResponseRedirect(reverse('adminDashboard'))
+        
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('profDashboard'))
+            
+        elif group == 'dean':
             return view_func(request, *args, **kwargs)
     return wrapper

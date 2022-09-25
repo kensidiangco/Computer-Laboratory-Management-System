@@ -1,4 +1,5 @@
 from contextlib import redirect_stderr
+from typing import ContextManager
 from urllib.robotparser import RequestRate
 from django.shortcuts import render
 from .forms import RegisterForm
@@ -7,16 +8,16 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib import messages
-from ...decorators import unauthenticated_user, admin_only, ITDept_only
+from ...decorators import dean_only, unauthenticated_user, admin_only, ITDept_only, prof_only
 from django.contrib.auth.models import Group
-from .models import Theme, Profile, Notification
+from .models import Theme, Profile
 from ..transaction.models import Sched_Request
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
-def registerPage(request):
+def profRegisterPage(request):
     form = RegisterForm()
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -25,7 +26,7 @@ def registerPage(request):
             user = form.save(commit=False)
             username = form.cleaned_data.get('username')
             user.save()
-            group = Group.objects.get(name='staff')
+            group = Group.objects.get(name='prof')
             user.groups.add(group)
             
             messages.success(request, 'Account successfully created for ' + username)
@@ -34,7 +35,29 @@ def registerPage(request):
         else:
             messages.error(request, form.errors)
             
-    return render(request, './account/register.html', { 'registerForm': form })
+    return render(request, './account/prof/profRegister.html', { 'registerForm': form })
+    
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_only
+def deanRegisterPage(request):
+    form = RegisterForm()
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        
+        if form.is_valid():
+            user = form.save(commit=False)
+            username = form.cleaned_data.get('username')
+            user.save()
+            group = Group.objects.get(name='dean')
+            user.groups.add(group)
+            
+            messages.success(request, 'Account successfully created for ' + username)
+            return HttpResponseRedirect(reverse('loginPage'))
+            
+        else:
+            messages.error(request, form.errors)
+            
+    return render(request, './account/dean/deanRegister.html', { 'registerForm': form })
     
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
@@ -56,7 +79,7 @@ def ITDeptAccountRegister(request):
         else:
             messages.error(request, form.errors)
             
-    return render(request, './account/ITDeptAccountRegister.html', { 'registerForm': form })
+    return render(request, './account/itdept/ITDeptAccountRegister.html', { 'registerForm': form })
 
 @unauthenticated_user
 def loginPage(request):
@@ -145,14 +168,13 @@ def adminDashboard(request):
     return render(request, './account/admin/dashboard.html', context)
 
 @login_required(login_url=reverse_lazy("loginPage"))
-@ITDept_only
-def ITDeptDashboard(request):
-
+@dean_only
+def deanDashboard(request):
     pending = Sched_Request.objects.filter(status="Pending")
     approved = Sched_Request.objects.filter(status="Approved")
     rejected = Sched_Request.objects.filter(status="Rejected")
-
-    # group = list(request.user.groups.values_list('name',flat = True))
+    onGoing = Sched_Request.objects.filter(status="On going")
+    done = Sched_Request.objects.filter(status="Done")
 
     if Theme.objects.filter(user=request.user.username).exists():
         color = Theme.objects.get(user=request.user.username).color
@@ -164,6 +186,32 @@ def ITDeptDashboard(request):
         'pending': pending,
         'approved': approved,
         'rejected': rejected,
+        'onGoing': onGoing,
+        'done': done
+    }
+    return render(request, './account/dean/deanDashboard.html', context)
+
+@login_required(login_url=reverse_lazy("loginPage"))
+@ITDept_only
+def ITDeptDashboard(request):
+    pending = Sched_Request.objects.filter(status="Pending")
+    approved = Sched_Request.objects.filter(status="Approved")
+    rejected = Sched_Request.objects.filter(status="Rejected")
+    onGoing = Sched_Request.objects.filter(status="On going")
+    done = Sched_Request.objects.filter(status="Done")
+
+    if Theme.objects.filter(user=request.user.username).exists():
+        color = Theme.objects.get(user=request.user.username).color
+    else:
+        color = 'light'
+        
+    context = {
+        'color': color,
+        'pending': pending,
+        'approved': approved,
+        'rejected': rejected,
+        'onGoing': onGoing,
+        'done': done
     }
     return render(request, './account/itdept/dashboard.html', context)
 
@@ -171,13 +219,47 @@ def ITDeptDashboard(request):
 def userLogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
-    
+
 @login_required(login_url=reverse_lazy("loginPage"))
-def userPage(request):
-    sched = Sched_Request.objects.filter(requester=request.user)
+@prof_only
+def profDashboard(request):
+    sched = Sched_Request.objects.filter(requester=request.user.id)
 
-    paginator = Paginator(sched, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    pendingSched = sched.filter(status="Pending")
+    onGoingSched = sched.filter(status="On Going")
+    doneSched = sched.filter(status="Done")
+    approvedSched = sched.filter(status="Approved")
+    rejectedSched = sched.filter(status="Rejected")
 
-    return render(request, './account/userPage.html', {'sched': sched, 'page_obj': page_obj})
+    # pendingSchedPaginator = Paginator(pendingSched, 5)
+    # page_number = request.GET.get('page')
+    # pendingSchedPage_obj = pendingSchedPaginator.get_page(page_number)
+
+    # onGoingSchedPaginator = Paginator(onGoingSched, 5)
+    # page_number = request.GET.get('page')
+    # onGoingSchedPage_obj = onGoingSchedPaginator.get_page(page_number)
+
+    # doneSchedPaginator = Paginator(doneSched, 5)
+    # page_number = request.GET.get('page')
+    # doneSchedPage_obj = doneSchedPaginator.get_page(page_number)
+
+    # approvedSchedPaginator = Paginator(approvedSched, 5)
+    # page_number = request.GET.get('page')
+    # approvedSchedPage_obj = approvedSchedPaginator.get_page(page_number)
+
+    # rejectedSchedPaginator = Paginator(rejectedSched, 5)
+    # page_number = request.GET.get('page')
+    # rejectedSchedPage_obj = rejectedSchedPaginator.get_page(page_number)
+
+    context = {
+        'pendingSched': pendingSched,
+        'onGoingSched': onGoingSched,
+        'doneSched': doneSched,
+        'approvedSched': approvedSched,
+        'rejectedSched': rejectedSched,
+        'sched': sched
+    }
+
+
+
+    return render(request, './account/prof/profDashboard.html', context)
