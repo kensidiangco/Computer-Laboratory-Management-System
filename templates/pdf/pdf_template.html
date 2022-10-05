@@ -1,0 +1,86 @@
+<html>
+<head>
+    <style>
+        @page {
+            size: a4 portrait;
+            @frame header_frame {           /* Static Frame */
+                -pdf-frame-content: header_content;
+                left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+            }
+            @frame content_frame {          /* Content Frame */
+                left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+            }
+            @frame footer_frame {           /* Another static Frame */
+                -pdf-frame-content: footer_content;
+                left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+            }
+        }
+    </style>
+    </head>
+    
+    <body>
+        <!-- Content for Static Frame 'header_frame' -->
+        <div id="header_content">
+            <span>{{date_today}}</span>
+            <h3>Computer Laboratory Management System</h3>
+        </div>
+    
+        <!-- Content for Static Frame 'footer_frame' -->
+        <div id="footer_content">(c) - page <pdf:pagenumber>
+            of <pdf:pagecount>
+        </div>
+    
+        <!-- HTML Content -->
+        <table>
+                <tr>
+                    <td>Don Quijote Dimasalang</td>
+                    <td>0921-401-5874</td>
+                </tr>
+                <tr>
+                    <td>Manila PH,</td>
+                    <td>sjc-clms@gmail.com</td>
+                </tr>
+                <tr>
+                    <td>1012</td>
+                    <td>SJC-CLMS.com</td>
+                </tr>
+        </table>
+
+        <br>
+        <h4>Done Schedules</h4>
+        <hr>
+    
+        <table>
+            <tr>
+     
+                <th>Requester by</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Section</th>
+                <th>Students</th>
+                <th>Date requested</th>
+                <th>In</th>
+                <th>Out</th>
+                <th>Status</th>
+            </tr>
+
+            {% for sched in data  %}
+                <tr>
+                    <td>{{sched.requester}}</td>
+                    <td>{{sched.course}}</td>
+                    <td>{{sched.year_level}}</td>
+                    <td>{{sched.section}}</td>
+                    <td>{{sched.student_set.all.count}}</td>
+                    <td>{{sched.date_request}}</td>
+                    <td>{{sched.time_in}}</td>
+                    <td>{{sched.time_out}}</td>
+                    <td>{{sched.status}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    
+        <hr>
+    
+        <p><strong>Total schedules: {{data.count}}</strong></p>
+    </body>
+    </html>

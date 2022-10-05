@@ -1,10 +1,12 @@
 {% load static %}
 {% load tailwind_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <title>SJC-CLMS</title>
         {% tailwind_css %}
+        <link rel="stylesheet" href="{% static 'index.css' %}">
     </haed>
 
     <body class="bg-gray-50">
@@ -16,22 +18,30 @@
         {% if request.user.is_authenticated %}
             <a href="{% url 'logout' %}">Logout<a>
         {% endif %}{% endcomment %}
-        <div class="">
-            <div class="p-16 text-center bg-white flex flex-col gap-8 items-center">
-                <p class="text-3xl font-bold">Computer Laboratory Management System<p>
+
+        <div class="flex flex-col">
+            <div class="p-16 text-center bg-black text-black flex flex-col gap-12 items-center shadow-md">
+                <p class="text-5xl font-serif font-bold text-white">Computer Laboratory Management System<p>
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'adminDashboard' %}" class="p-4 bg-purple-600 text-white rounded-md shadow-sm">Dashboard<a>
+                    <a href="{% url 'adminDashboard' %}" class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm">Dashboard<a>
                     {% if 'prof' in user_group %}
-                        <a class="p-4 bg-purple-600 text-white rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
+                        <a class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
                     {% endif %}
                     {% else %}
-                    <a class="p-4 bg-purple-600 text-white rounded-md shadow-sm" href="{% url 'loginPage' %}">Login to your account</a>
-                    <a class="p-4 bg-purple-600 text-white rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
+                    <a class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm" href="{% url 'loginPage' %}">Login to your account</a>
+                    <a class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
                 {% endif %}
             </div>
+
+            <div class="h-screen" id="bgImage">
+            </div>
+
             {% comment %} <a href="{% url 'loginPage' %}">Login your account.</a>
             <a href="{% url 'registerPage' %}">Register prof account.</a>
             <a href="{% url 'ITDeptAccountRegister' %}">Register IT Dept account.</a> {% endcomment %}
         </div>
+        <footer class="bg-black p-8">
+            <p class="text-sm text-white text-center">Computer Laboratory Monitorig System @2022</p>
+        </footer>
     </body>
 </html>

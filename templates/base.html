@@ -12,31 +12,38 @@
     </head>
     <body>
         {% if user.is_authenticated %}
-            <div class="p-4 mx-auto flex items-center bg-green-500 text-white border-none border-b-4 border-b-yellow-200 shadow-md">
+            <div class="p-4 mx-auto flex items-center bg-black text-white border-none shadow-md">
                 <div class="flex gap-4 items-center w-full">
                     <a href="{% url 'index' %}" class="text-3xl">CLMS</a>
                     <a href="{% url 'adminDashboard' %}">Dashboard</a>
+                    
+                    {% if 'prof' not in user_group %}
+                        <a href="{% url 'exportData' %}">Export data</a>
+                    {% endif %}
+
                     {% if 'admin' in user_group %}
                         <a href="{% url 'formPage' %}">Forms</a>
                         {% elif 'prof' in user_group %}
                         <a href="{% url 'requestForm' %}">Request Schedule</a>
                     {% endif %}
                 </div>
-                <div class="flex gap-4 float-right">
+
+                <div class="flex gap-4 float-right total-unread">
                     {% if notification_count.count <= 0 %}
                         <button id="notification" onClick="notifClicked()">Notification</button>
                         <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button>
                     {% else %}
-                        <button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm">{{notification_count.count}}</span></button>
+                        <button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">{{notification_count.count}}</span></button>
                         <button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">{{notification_count.count}}</span></button>
                     {% endif %}
+
                     <button id="profile" onClick="profileClicked()">Account</button>
                     <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>
                     {% comment %} <button>Settings</button> {% endcomment %}
                 </div>
             </div>
             <div id="notif-modal" class="hidden absolute bg-white right-7 top-12 mr-10 rounded-md shadow-md h-auto max-h-96 max-w-96 w-96 overflow-scroll scroll-smooth">
-                <div class="flex">
+                <div class="flex notif-status">
                     {% if notification_count.count <= 0 %}
                         <p class="p-4 text-sm text-center text-gray-500">No new notification.</p>
                     {% else %}
@@ -71,6 +78,10 @@
 
             {% block content  %}
             {% endblock content %}
+
+            <footer class="bg-black p-8">
+                <p class="text-sm text-white text-center">Computer Laboratory Monitorig System @2022</p>
+            </footer>
     </body>
 
     <script>
@@ -127,7 +138,7 @@
                             $(".ajaxRes").text();
                         },
                         success:function(res) {
-                            _html = '';
+                            _html='';
                             _json = $.parseJSON(res.data);
                             var monthNames = [
                                 "Jan.", "Feb.", "March",
@@ -152,13 +163,15 @@
                             
                                 return monthNames[monthIndex] + " " + day + " " + year;
                             }
-
+                            
                             $.each(_json, function(index, d) {
                                 if(d.fields.read){
+                                    
                                     _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-600 border-2 hover:bg-gray-100 transition transition-delay-1 cursor-pointer"><span>'+ d.fields.description +'</span> <span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span></a>';
-                                }else {
-                                    _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-700 border-2 bg-yellow-300 hover:bg-yellow-200 transition transition-delay-1 cursor-pointer"><span>'+ d.fields.description +'</span> <span class="text-sm text-gray-600">'+ get_date(d.fields.date_created) +'<span></a>';
+                                    }else {
+                                        _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-700 border-2 bg-yellow-300 hover:bg-yellow-200 transition transition-delay-1 cursor-pointer"><span>'+ d.fields.description +'</span> <span class="text-sm text-gray-600">'+ get_date(d.fields.date_created) +'<span></a>';
                                 }
+                                
                             });
         
                             $('.notif-list').html(_html);
@@ -169,10 +182,40 @@
             });
 
             $(document).on("click", ".mark-all-read", function() {
-
                 $.ajax({
                     url: "{% url 'clearNotification' %}"
                 });
+            });
+
+            $(document).ready(function() {
+                $(".ajaxRes").hide();
+                setInterval(function() {
+                    $.ajax({
+                        url: "{% url 'getNotifs' %}",
+                        dataType: 'json',
+                        beforeSend:function() {
+                            $(".ajaxRes").show();
+                            $(".ajaxRes").text();
+                        },
+                        success:function(res) {
+                            _totalUnread = '';
+                            _notifStatus='';
+                            _json = $.parseJSON(res.totalUnread);
+
+                            if(_json > 0) {
+                                _notifStatus='<button type="button" class="text-sm p-4 text-blue-500 cursor-pointer hover:bg-blue-100 float-right w-full text-center mark-all-read">Mark all as read</button>'
+                                _totalUnread += '<button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button><button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
+                            } else {
+                                _notifStatus='<p class="p-4 text-sm text-center text-gray-500">No new notification.</p>'
+                                _totalUnread += '<button id="notification" onClick="notifClicked()">Notification</button> <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
+                            }
+
+                            $('.notif-status').html(_notifStatus);
+                            $('.total-unread').html(_totalUnread);
+                            $(".ajaxRes").hide();
+                        }
+                    })
+                }, 3000)
             });
             
         </script>

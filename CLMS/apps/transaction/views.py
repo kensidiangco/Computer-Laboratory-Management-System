@@ -1,24 +1,23 @@
-from datetime import datetime
-from msilib.schema import File
+from django.views import View
+import xlwt
+import io
+import xlsxwriter
+from xhtml2pdf import pisa
+import pandas as pd
+from datetime import datetime, date, time
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
-
 from CLMS.apps.account.models import Notification
 from .models import Approved_Schedule, Rejected_Schedule, Student, Sched_Request, Sched_Time_Usage
-import pandas as pd
 from django.http import JsonResponse 
 from .forms import ScheduleRequestForm, StudentForm
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-
-import io
-import xlsxwriter
 from django.http import HttpResponse
-
+from django.template.loader import get_template
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def studentListExport(request):
@@ -131,6 +130,14 @@ def requestDetails(request, pk):
     page_obj = paginator.get_page(page_number)
 
     approvedId = Approved_Schedule.objects.filter(sched=requestDetails)
+
+    dateTimeA = datetime.combine(datetime.today(), requestDetails.time_in)
+    dateTimeB = datetime.combine(datetime.today(), requestDetails.time_out)
+
+    dateTimeDifference = dateTimeB - dateTimeA
+    dateTimeDifferenceInHours = dateTimeDifference.total_seconds() / 3600
+
+    print(dateTimeDifferenceInHours, dateTimeDifference)
 
     if request.method == 'POST':
         if 'approve_sched' in request.POST:
@@ -297,7 +304,7 @@ def rejectedRequest(request):
 def getNotifs(request):
     data = Notification.objects.filter(receiver=request.user).order_by('-date_created')
     jsonData = serializers.serialize('json', data)
-    totalUnread = Notification.objects.filter(read=False).count()
+    totalUnread = Notification.objects.filter(read=False, receiver=request.user).count()
 
     return JsonResponse({'data': jsonData, 'totalUnread': totalUnread})
 
@@ -337,3 +344,114 @@ def doneSchedule(request):
     }
 
     return render(request, './transaction/doneSchedule.html', context)
+
+def render_to_pdf(template_src, context_dict={}):
+	template = get_template(template_src)
+	html  = template.render(context_dict)
+	result = io.BytesIO()
+	pdf = pisa.pisaDocument(io.BytesIO(html.encode("ISO-8859-1")), result)
+	if not pdf.err:
+		return HttpResponse(result.getvalue(), content_type='application/pdf')
+	return None
+
+# data = {
+# 	"company": "Dennnis Ivanov Company",
+# 	"address": "123 Street name",
+# 	"city": "Vancouver",
+# 	"state": "WA",
+# 	"zipcode": "98663",
+
+# 	"phone": "555-555-2345",
+# 	"email": "youremail@dennisivy.com",
+# 	"website": "dennisivy.com",
+# }
+class ViewPDF(View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            'data': Sched_Request.objects.filter(status="Done"),
+            'date_today': datetime.today().strftime('%B %d, %Y %I:%H %p')
+        }
+        pdf = render_to_pdf('pdf/pdf_template.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+
+class DownloadPDF(View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            'data': Sched_Request.objects.filter(status="Done"),
+            'date_today': datetime.today().strftime('%B %d, %Y %I:%H %p')
+        }
+        pdf = render_to_pdf('app/pdf_template.html', data)
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "CLSM-Schedules%s.pdf" %(datetime.today().strftime('%B %d, %Y %I:%H %p'))
+        content = "attachment; filename='%s'" %(filename)
+        response['Content-Disposition'] = content
+        return response
+
+def exportData(request):
+    doneSched = Sched_Request.objects.filter(status="Done")
+
+    if request.method == "POST":
+        DateFrom = request.POST.get('dateFrom')
+        DateTo = request.POST.get('dateTo')
+        queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo], status="Done")
+
+        data = {
+            'data': queryset,
+            'date_today': datetime.today().strftime('%B %d, %Y %I:%H %p')
+        }
+        pdf = render_to_pdf('pdf/pdf_template.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+
+
+        # DateFrom = request.POST.get('dateFrom')
+        # DateTo = request.POST.get('dateTo')
+        # queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo], status="Done")
+
+        # response = HttpResponse(content_type='application/ms-excel')
+        # response['Content-Disposition'] = 'attachment; filename="Done-Schedules.xls"'
+
+        # wb = xlwt.Workbook(encoding='utf-8')
+        # ws = wb.add_sheet('Done schedules')
+
+        # # Sheet header, first row
+        # row_num = 0
+
+        # font_style = xlwt.XFStyle()
+        # font_style.font.bold = True
+
+        # columns = ['requester', 'course', 'year_level', 'section', 'time_in', 'time_out', 'date_request', 'status', 'date_created']
+
+        # for col_num in range(len(columns)):
+        #     ws.write(row_num, col_num, columns[col_num], font_style)
+
+        # # Sheet body, remaining rows
+        # font_style = xlwt.XFStyle()
+
+        # rows = queryset.values_list('requester__username', 'course', 'year_level', 'section', 'time_in', 'time_out', 'date_request', 'status', 'date_created')
+        # for row in rows:
+        #     row_num += 1
+        #     for col_num in range(len(row)):
+        #         if isinstance(row[col_num], date):
+        #             dateCol = row[col_num].strftime('%Y-%m-%d')
+        #             ws.write(row_num, col_num, dateCol, font_style)
+        #         elif isinstance(row[col_num], time):
+        #             timeCol = row[col_num].strftime('%I:%M %p')
+        #             ws.write(row_num, col_num, timeCol, font_style)
+        #         else:
+        #             ws.write(row_num, col_num, row[col_num], font_style)
+
+        # wb.save(response)
+        # return response
+
+    paginator = Paginator(doneSched, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    schedCount = len(doneSched)
+
+    context = {
+        'doneSched': doneSched,
+        'page_obj': page_obj,
+        'schedCount': schedCount
+    }
+
+    return render(request, './transaction/exportData.html', context)
