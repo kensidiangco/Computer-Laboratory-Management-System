@@ -15,13 +15,20 @@
                 left: 50pt; width: 512pt; top: 772pt; height: 20pt;
             }
         }
+        .Infortant-info {
+            color: red;
+        }
+        .report-date {
+            text-align: right;
+            color: red;
+        }
     </style>
     </head>
     
     <body>
         <!-- Content for Static Frame 'header_frame' -->
         <div id="header_content">
-            <span>{{date_today}}</span>
+            <span class="report-date">Report Date: {{date_today}}</span>
             <h3>Computer Laboratory Management System</h3>
         </div>
     
@@ -47,7 +54,7 @@
         </table>
 
         <br>
-        <h4>Done Schedules</h4>
+        <h3 class="Infortant-info">Schedules <span>From: {{DateFrom}} To: {{DateTo}}</span></h3>
         <hr>
     
         <table>

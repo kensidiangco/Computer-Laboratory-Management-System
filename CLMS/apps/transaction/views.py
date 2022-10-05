@@ -397,7 +397,9 @@ def exportData(request):
 
         data = {
             'data': queryset,
-            'date_today': datetime.today().strftime('%B %d, %Y %I:%H %p')
+            'date_today': datetime.today().strftime('%B %d, %Y %I:%H %p'),
+            'DateFrom': DateFrom,
+            'DateTo': DateTo
         }
         pdf = render_to_pdf('pdf/pdf_template.html', data)
         return HttpResponse(pdf, content_type='application/pdf')
