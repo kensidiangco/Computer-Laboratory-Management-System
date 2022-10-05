@@ -863,6 +863,10 @@ select {
   width: 20rem;
 }
 
+.border-collapse {
+  border-collapse: collapse;
+}
+
 .border-separate {
   border-collapse: separate;
 }

@@ -15,20 +15,45 @@
                 left: 50pt; width: 512pt; top: 772pt; height: 20pt;
             }
         }
-        .Infortant-info {
+        .important-info {
             color: red;
         }
         .report-date {
             text-align: right;
-            color: red;
+            {% comment %} color: green; {% endcomment %}
         }
+        .data {
+            padding: 1.5px;
+        }
+        #data {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+          }
+          
+          #data td {
+            border: 1px solid #ddd;
+            padding: 2.5px;
+          }
+          
+          #data tr:nth-child(even){background-color: #f2f2f2;}
+          
+          #data tr:hover {background-color: #ddd;}
+          
+          #data th {
+            padding: 4px;
+            text-align: left;
+            border: 1px solid #ddd;
+            background-color: #04AA6D;
+            color: white;
+          }
     </style>
     </head>
     
     <body>
         <!-- Content for Static Frame 'header_frame' -->
         <div id="header_content">
-            <span class="report-date">Report Date: {{date_today}}</span>
+            <span class="report-date">{{date_today}}</span>
             <h3>Computer Laboratory Management System</h3>
         </div>
     
@@ -53,35 +78,35 @@
                 </tr>
         </table>
 
-        <br>
-        <h3 class="Infortant-info">Schedules <span>From: {{DateFrom}} To: {{DateTo}}</span></h3>
         <hr>
+        <h3>Schedules <span>From: {{DateFrom}} To: {{DateTo}}</span></h3>
     
-        <table>
+        <table id="data">
             <tr>
-     
-                <th>Requester by</th>
+                <th>No.</th>
+                <th>Req. by</th>
                 <th>Course</th>
                 <th>Year</th>
                 <th>Section</th>
                 <th>Students</th>
-                <th>Date requested</th>
-                <th>In</th>
-                <th>Out</th>
-                <th>Status</th>
+                <th>Date</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                {% comment %} <th>Status</th> {% endcomment %}
             </tr>
 
             {% for sched in data  %}
                 <tr>
-                    <td>{{sched.requester}}</td>
-                    <td>{{sched.course}}</td>
-                    <td>{{sched.year_level}}</td>
-                    <td>{{sched.section}}</td>
-                    <td>{{sched.student_set.all.count}}</td>
-                    <td>{{sched.date_request}}</td>
-                    <td>{{sched.time_in}}</td>
-                    <td>{{sched.time_out}}</td>
-                    <td>{{sched.status}}</td>
+                    <td class="data">{{forloop.counter}}</td>
+                    <td class="data">{{sched.requester}}</td>
+                    <td class="data">{{sched.course}}</td>
+                    <td class="data">{{sched.year_level}}</td>
+                    <td class="data">{{sched.section}}</td>
+                    <td class="data">{{sched.student_set.all.count}}</td>
+                    <td class="data">{{sched.date_request}}</td>
+                    <td class="data">{{sched.time_in}}</td>
+                    <td class="data">{{sched.time_out}}</td>
+                    {% comment %} <td class="data">{{sched.status}}</td> {% endcomment %}
                 </tr>
             {% endfor %}
         </table>

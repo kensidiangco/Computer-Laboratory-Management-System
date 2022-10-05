@@ -397,7 +397,7 @@ def exportData(request):
 
         data = {
             'data': queryset,
-            'date_today': datetime.today().strftime('%B %d, %Y %I:%H %p'),
+            'date_today': datetime.today().strftime('%B %d, %Y'),
             'DateFrom': DateFrom,
             'DateTo': DateTo
         }
