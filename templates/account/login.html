@@ -14,13 +14,14 @@
                 {% csrf_token %}
                 <input type="text" class="rounded-md transition transition-delay-2" id="username" name="username" placeholder="Username" autocapitalize="none" required>
                 <input type="password" class="rounded-md transition transition-delay-2" id="password" name="password" placeholder="password" autocapitalize="none" required>
-                <input type="submit" class="bg-green-600 text-white rounded-md p-2 hover:bg-green-500 cursor-pointer" value="Login">
+                <input type="submit" class="bg-purple-600 text-white rounded-md p-2 hover:bg-purple-500 cursor-pointer" value="Login">
             </form>
-            {% comment %} <div class="flex flex-col gap-2 p-2 text-center text-blue-600">
-                <p class="text-sm">Doesn't have an account?</p>
-                <a href="{% url 'registerPage' %}" class="text-sm bg-gray-200 text-gray-600 rounded-md p-2 hover:bg-gray-400 hover:text-white transition transition-delay-2 cursor-pointer">Create staff account.</a>
-                <a href="{% url 'ITDeptAccountRegister' %}" class="text-sm bg-gray-200 text-gray-600 rounded-md p-2 hover:bg-gray-400 hover:text-white transition transition-delay-2 cursor-pointer">Create IT Dept account.</a>
-            </div> {% endcomment %}
+            <div class="flex flex-col gap-2 p-2 text-center text-purple-600">
+                {% comment %} <p class="text-sm">Forgot password?</p> {% endcomment %}
+                <a href="{% url 'password_reset' %}" class="text-sm cursor-pointer">Forgot password?</a>
+                {% comment %} <a href="{% url 'registerPage' %}" class="text-sm bg-gray-200 text-gray-600 rounded-md p-2 hover:bg-gray-400 hover:text-white transition transition-delay-2 cursor-pointer">Create staff account.</a>
+                <a href="{% url 'ITDeptAccountRegister' %}" class="text-sm bg-gray-200 text-gray-600 rounded-md p-2 hover:bg-gray-400 hover:text-white transition transition-delay-2 cursor-pointer">Create IT Dept account.</a> {% endcomment %}
+            </div>
         </div>        
     </div>
 {% endblock content %}

@@ -25,8 +25,8 @@
                         <a href="{% url 'formPage' %}">Forms</a>
                         {% elif 'prof' in user_group %}
                         <a href="{% url 'requestForm' %}">Request Schedule</a>
-                    {% endif %}
-                </div>
+                        {% endif %}
+                    </div>
 
                 <div class="flex gap-4 float-right total-unread">
                     {% if notification_count.count <= 0 %}
@@ -74,6 +74,9 @@
                     <a href="{% url 'logout' %}" class="font-bold p-4 hover:bg-gray-100 transition transition-delay-1">Logout</a>
                 </span>
             </div>
+
+            {% else %}
+                <p class="p-2 bg-black text-white text-center">Computer Laboratory Management System | Saint Jude College Manila</p>
             {% endif %}
 
             {% block content  %}

@@ -1,6 +1,20 @@
 from django import forms
 from .models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordResetForm
+
+class UserPasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super(UserPasswordResetForm, self).__init__(*args, **kwargs)
+
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={
+        'class': 'your class',
+        'placeholder': 'your placeholder',
+        'type': 'email',
+        'name': 'email'
+    }))
+
+
 
 class RegisterForm(UserCreationForm):
     class Meta():
