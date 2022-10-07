@@ -3,7 +3,7 @@
 {% block title %}Dashboard{% endblock title %}
 
 {% block content %}
-<div class="py-4 mx-10 h-screen">
+<div class="mx-10 h-screen flex flex-col gap-6">
     <p class="text-2xl text-gray-600 p-4">Dashboard</p>
     <div class="flex flex-wrap justify-center gap-6">
         <a href="{% url 'Prof_Pending_Schedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-blue-600">
@@ -32,7 +32,8 @@
                 <p class="text-xl">{{ rejectedSched.count }}</p>
             {% endif %}
         </a>
-
+    </div>
+    <div class="flex flex-wrap justify-center gap-6">
         <a href="{% url 'Prof_Ongoing_Schedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-blue-600">
             <p class="text-gray-900">On going Schedule</p>
             {% if onGoingSched.count < 1 %}

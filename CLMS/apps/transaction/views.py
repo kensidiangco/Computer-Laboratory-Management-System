@@ -149,14 +149,6 @@ def requestDetails(request, pk):
 
     approvedId = Approved_Schedule.objects.filter(sched=requestDetails)
 
-    dateTimeA = datetime.combine(datetime.today(), requestDetails.time_in)
-    dateTimeB = datetime.combine(datetime.today(), requestDetails.time_out)
-
-    dateTimeDifference = dateTimeB - dateTimeA
-    dateTimeDifferenceInHours = dateTimeDifference.total_seconds() / 3600
-
-    print(dateTimeDifferenceInHours, dateTimeDifference)
-
     if request.method == 'POST':
         if 'approve_sched' in request.POST:
             sched = Sched_Request.objects.get(pk=pk)
@@ -274,11 +266,32 @@ def requestDetails(request, pk):
 
     try:
         time_usage = Sched_Time_Usage.objects.get(sched=approvedId.first())
+        time_in = time_usage.date_created
+        time_out = time_usage.date_updated
+        time_diff = time_out - time_in
+        seconds_in_day = 24 * 60 * 60
+        diff = divmod(time_diff.days * seconds_in_day + time_diff.seconds, 60)
+
+        time_list = []
+        for td in diff:
+            time_list.append(td)
+        h = 0
+        m = time_list[0]
+        s = time_list[1]
+        
+        if time_list[0] > 60:
+            h += int(time_list[0] / 60)
+
+        print(h,":",m,":",s)
+
         context = {
             'requestDetails': requestDetails,
             'page_obj': page_obj, 
             'group': group,
-            'time_usage': time_usage
+            'time_usage': time_usage,
+            'hour': h,
+            'min': m,
+            'sec': s
         }
         return render(request, './transaction/requestDetails.html', context)
     except:
@@ -490,7 +503,8 @@ def exportData(request):
             'data': queryset,
             'date_today': datetime.today().strftime('%B %d, %Y'),
             'DateFrom': DateFrom,
-            'DateTo': DateTo
+            'DateTo': DateTo,
+            'Report_by': request.user
         }
         pdf = render_to_pdf('pdf/pdf_template.html', data)
         return HttpResponse(pdf, content_type='application/pdf')
