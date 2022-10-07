@@ -18,6 +18,8 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.template.loader import get_template
+from django.core.mail import send_mail, BadHeaderError
+from django.template.loader import render_to_string
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def studentListExport(request):
@@ -64,6 +66,22 @@ def requestForm(request):
             sched.requester = request.user
             sched.class_list = file
             sched.save()
+
+            subject = "New Schedule Request!"
+            email_template_name = "transaction/notification/email/email_notification_template.txt"
+            c = {
+                "email":"kensidiangco@gmail.com",
+                'domain':'127.0.0.1:8000',
+                'site_name': 'Website',
+                'protocol': 'http',
+                'sched_date_req': sched.date_request,
+                'sched': sched.pk
+            }
+            email = render_to_string(email_template_name, c)
+            try:
+                send_mail(subject, email, 'admin@example.com' , ['kensidiangco@gmail.com', 'jore.sidiangco.sjc@phinmaed.com', 'nisu.marcelo.sjc@phinmaed.com', 'jhpa.carag.sjc@phinmaed.com'], fail_silently=False)
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
 
             Notification.objects.create(
                 receiver=User.objects.get(username='dean'),
@@ -457,12 +475,16 @@ class DownloadPDF(View):
         return response
 
 def exportData(request):
-    doneSched = Sched_Request.objects.filter(status="Done")
+    scheds = Sched_Request.objects.all()
 
     if request.method == "POST":
         DateFrom = request.POST.get('dateFrom')
         DateTo = request.POST.get('dateTo')
-        queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo], status="Done")
+        sched_status = request.POST.get('sched_status')
+        if sched_status == "all":
+            queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo])
+        else:
+            queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo], status=sched_status)
 
         data = {
             'data': queryset,
@@ -514,13 +536,12 @@ def exportData(request):
         # wb.save(response)
         # return response
 
-    paginator = Paginator(doneSched, 8)
+    paginator = Paginator(scheds, 8)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    schedCount = len(doneSched)
+    schedCount = len(scheds)
 
     context = {
-        'doneSched': doneSched,
         'page_obj': page_obj,
         'schedCount': schedCount
     }

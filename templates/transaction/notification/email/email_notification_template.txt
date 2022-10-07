@@ -1,0 +1,15 @@
+{% autoescape off %}
+Hello,
+
+We received a new schedule request.
+
+Date requested: {{sched_date_req}}
+
+please visit {{ protocol }}://{{domain}}/schedule/request/{{sched}}/ to check the schedule details and decide if you approve or reject the request.
+
+If you are busy, you can simply ignore this email.
+
+Sincerely,
+The CLMS Team
+
+{% endautoescape %}

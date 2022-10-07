@@ -92,6 +92,7 @@
                 <th>Date</th>
                 <th>Time In</th>
                 <th>Time Out</th>
+                <th>Status</th>
                 {% comment %} <th>Status</th> {% endcomment %}
             </tr>
 
@@ -106,6 +107,7 @@
                     <td class="data">{{sched.date_request}}</td>
                     <td class="data">{{sched.time_in}}</td>
                     <td class="data">{{sched.time_out}}</td>
+                    <td class="data">{{sched.status}}</td>
                     {% comment %} <td class="data">{{sched.status}}</td> {% endcomment %}
                 </tr>
             {% endfor %}

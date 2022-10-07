@@ -6,22 +6,22 @@
     <div class="py-4 mx-10 h-screen">
         <p class="text-2xl text-gray-600">Forms</p>
         <div class="flex flex-col gap-4 items-center">
-            <div class="p-6 bg-white flex flex-col gap-4 rounded-xl shadow-md border border-0 border-l-8 border-l-green-600 border-t-green-600">
+            <div class="p-6 bg-white flex flex-col gap-4 rounded-xl shadow-md border border-0 border-l-8 border-l-gray-600 border-t-gray-600">
                 {% if request.user.username == 'admin' %}
-                    <a href="{% url 'ITDeptAccountRegister' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                    <a href="{% url 'ITDeptAccountRegister' %}" class="p-4 rounded-md w-80 bg-gray-600 hover:bg-gray-500 text-white">
                         Create acount for IT Department
                     </a>
 
-                    <a href="{% url 'profRegisterPage' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                    <a href="{% url 'profRegisterPage' %}" class="p-4 rounded-md w-80 bg-gray-600 hover:bg-gray-500 text-white">
                         Create an account for Professor
                     </a>
 
-                    <a href="{% url 'deanRegisterPage' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                    <a href="{% url 'deanRegisterPage' %}" class="p-4 rounded-md w-80 bg-gray-600 hover:bg-gray-500 text-white">
                         Create an account for Dean
                     </a>
 
                 {% else %}
-                    <a href="{% url 'requestForm' %}" class="p-4 rounded-md w-80 bg-green-600 hover:bg-green-500 text-white">
+                    <a href="{% url 'requestForm' %}" class="p-4 rounded-md w-80 bg-gray-600 hover:bg-gray-500 text-white">
                         Request new schedule
                     </a>
                 {% endif %}

@@ -296,7 +296,7 @@ def profDashboard(request):
         'rejectedSched': rejectedSched,
         'sched': sched
     }
-
-
-
     return render(request, './account/prof/profDashboard.html', context)
+
+def About_Us(request):
+    return render(request, './about_us.html')

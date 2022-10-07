@@ -12,7 +12,7 @@
             <h1 class="text-center text-2xl p-2">Login your account.</h1>
             <form method="POST" class="flex flex-col gap-2">
                 {% csrf_token %}
-                <input type="text" class="rounded-md transition transition-delay-2" id="username" name="username" placeholder="Username" autocapitalize="none" required>
+                <input type="text" class="rounded-md transition transition-delay-2" id="username" name="username" placeholder="Username" autocapitalize="none" autofocus required>
                 <input type="password" class="rounded-md transition transition-delay-2" id="password" name="password" placeholder="password" autocapitalize="none" required>
                 <input type="submit" class="bg-purple-600 text-white rounded-md p-2 hover:bg-purple-500 cursor-pointer" value="Login">
             </form>
