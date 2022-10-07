@@ -354,17 +354,86 @@ def render_to_pdf(template_src, context_dict={}):
 		return HttpResponse(result.getvalue(), content_type='application/pdf')
 	return None
 
-# data = {
-# 	"company": "Dennnis Ivanov Company",
-# 	"address": "123 Street name",
-# 	"city": "Vancouver",
-# 	"state": "WA",
-# 	"zipcode": "98663",
+def Prof_Pending_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('date_created')
+    paginator = Paginator(scheds, 5)
 
-# 	"phone": "555-555-2345",
-# 	"email": "youremail@dennisivy.com",
-# 	"website": "dennisivy.com",
-# }
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount
+    }
+
+    return render(request, './transaction/prof_view/pending_schedule.html', context)
+
+def Prof_Approved_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Approved").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount
+    }
+
+    return render(request, './transaction/prof_view/approved_schedule.html', context)
+
+def Prof_Rejected_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Rejected").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount
+    }
+
+    return render(request, './transaction/prof_view/rejected_schedule.html', context)
+
+def Prof_Ongoing_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="On Going").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount
+    }
+
+    return render(request, './transaction/prof_view/ongoing_schedule.html', context)
+
+def Prof_Done_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Done").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount
+    }
+
+    return render(request, './transaction/prof_view/done_schedule.html', context)
+
 class ViewPDF(View):
     def get(self, request, *args, **kwargs):
         data = {

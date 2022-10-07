@@ -6,7 +6,7 @@
 <div class="py-4 mx-10 h-screen">
     <p class="text-2xl text-gray-600 p-4">Dashboard</p>
     <div class="flex flex-wrap justify-center gap-6">
-        <a href="{% url 'requestList' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-blue-600">
+        <a href="{% url 'Prof_Pending_Schedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-blue-600">
             <p class="text-gray-900">Pending Request Schedule</p>
             {% if pendingSched.count < 1 %}
                 <p class="text-xl">No pending request.</p>
@@ -15,7 +15,7 @@
             {% endif %}
         </a>
 
-        <a href="{% url 'approvedRequest' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-green-600">
+        <a href="{% url 'Prof_Approved_Schedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-green-600">
             <p class="text-gray-900">Approved Schedule</p>
             {% if approvedSched.count < 1 %}
                 <p class="text-xl">No data.</p>
@@ -24,7 +24,7 @@
             {% endif %}
         </a>
 
-        <a href="{% url 'rejectedRequest' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-red-600">
+        <a href="{% url 'Prof_Rejected_Schedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-red-600">
             <p class="text-gray-900">Rejected Schedule</p>
             {% if rejectedSched.count < 1 %}
                 <p class="text-xl">No data.</p>
@@ -33,7 +33,7 @@
             {% endif %}
         </a>
 
-        <a href="{% url 'onGoingSchedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-blue-600">
+        <a href="{% url 'Prof_Ongoing_Schedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-blue-600">
             <p class="text-gray-900">On going Schedule</p>
             {% if onGoingSched.count < 1 %}
                 <p class="text-xl">Comlab is Available</p>
@@ -42,7 +42,7 @@
             {% endif %}
         </a>
 
-        <a href="{% url 'doneSchedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-green-600">
+        <a href="{% url 'Prof_Done_Schedule' %}" class="p-4 bg-white rounded-xl shadow-md border boder-0 border-l-8 border-l-green-600">
             <p class="text-gray-900">Done Schedule</p>
             {% if doneSched.count < 1 %}
                 <p class="text-xl">No data.</p>
