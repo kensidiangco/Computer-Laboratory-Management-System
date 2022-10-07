@@ -41,7 +41,6 @@ INSTALLED_APPS = [
 
     'CLMS.apps.account',
     'CLMS.apps.transaction',
-    'CLMS.apps.inventory',
     'tailwind',
     'theme',
     'django_browser_reload',
