@@ -1,0 +1,55 @@
+<div id="sideB" class="hidden md:block pb-10 my-transition">
+    <div class="ml-3 md:overflow-hidden overflow-auto md:hover:overflow-auto">
+        <div class="flex justify-between items-center">
+            <a href="/" class="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-light text-slate-900">
+                <span>CLMS</span>
+            </a>
+            <button type="button" onClick="closeMenu()" class="md:hidden text-xl rounded-full p-3 hover:bg-light-gray mt-4 block">
+                <
+            </button>
+        </div>
+        <div class="mt-10">
+            <div>
+                {% with request.resolver_match.url_name as url_name %}
+                    <p class="text-gray-400 m-3 mt-4 uppercase">DASHBOARD</p>
+                    <a href="{% url 'adminDashboard' %}" class="{% if url_name == 'deanDashboard' or url_name == 'adminDashboard' or url_name == 'profDashboard' or url_name == 'ITDeptDashboard' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Dashboard</a>
+
+                    <a href="{% url 'requestList' %}" class="{% if url_name == 'requestList' or url_name == 'Prof_Pending_Schedule' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Pending Schedules</a>
+
+                    <a href="{% url 'onGoingSchedule' %}" class="{% if url_name == 'onGoingSchedule' or url_name == 'Prof_Ongoing_Schedule' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">On Going Schedules</a>
+
+                    {% comment %} <a href="{% url 'approvedRequest' %}" class="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Approved Schedules</a>
+                    <a href="{% url 'rejectedRequest' %}" class="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Rejected Schedules</a>
+                    <a href="{% url 'doneSchedule' %}" class="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Done Schedules</a> {% endcomment %}
+                    {% if 'admin' in user_group %}
+                        <p class="text-gray-400 m-3 mt-4 uppercase">FORMS</p>
+                        <a href="{% url 'formPage' %}" class="{% if url_name == 'formPage' or url_name == 'ITDeptAccountRegister' or url_name == 'profRegisterPage' or url_name == 'deanRegisterPage' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Registration</a>
+                    {% endif %}
+                    {% if 'prof' in user_group %}
+                        <p class="text-gray-400 m-3 mt-4 uppercase">FORMS</p>
+                        <a href="{% url 'requestForm' %}" class="{% if url_name == 'requestForm' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Create schedule</a>
+                    {% endif %}
+                    
+                    {% if 'prof' not in user_group %}
+                        <p class="text-gray-400 m-3 mt-4 uppercase">FILE</p>
+                        <a href="{% url 'exportData' %}" class="{% if url_name == 'exportData' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Reports</a>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                        <p class="text-gray-400 m-3 mt-4 uppercase">Account</p>
+                        {% if notification_count.count > 0 %}
+                            <a href="{% url 'notification_page' %}" class="{% if url_name == 'notification_page' %}bg-purple-200{% endif %} flex items-center gap-1 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">
+                                Notifications
+                                <span class="bg-blue-600 text-white px-1 rounded-md text-sm">New</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'notification_page' %}" class="{% if url_name == 'notification_page' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Notifications</a>
+                        {% endif %}
+                        <a href="{% url 'profile' %}" class="{% if url_name == 'profile' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Profile</a>
+                        <a href="{% url 'logout' %}" class="flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Logout</a>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,7 @@
 {% load static %}
 {% load tailwind_tags %}
 <!DOCTYPE html>
-<html lang="en" class="bg-gray-50">
+<html lang="en" class="bg-gradient-to-r from-pink-50 via-slate-100 to-purple-50 backdrop backdrop-blue-xl">
     <head>
         <title>
             {% block title %}{% endblock title %}
@@ -9,218 +9,147 @@
         {% tailwind_css %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'account/base.css' %}"> {% endcomment %}
+        <style>
+            .my-transition{
+                -webkit-transition: all 0.5s ease-in-out;
+                -moz-transition:all 0.5s ease-in-out;
+                -o-transition:all 0.5s ease-in-out;
+                transition:all 0.5s ease-in-out;
+              }
+        </style>
     </head>
     <body>
+        
+        {% comment %} {% include './components/navbar.html' %}     {% endcomment %}
         {% if user.is_authenticated %}
-            <div class="p-4 mx-auto flex items-center bg-black text-white border-none shadow-md">
-                <div class="flex gap-4 items-center w-full">
-                    <a href="{% url 'index' %}" class="text-3xl">CLMS</a>
-                    <a href="{% url 'adminDashboard' %}">Dashboard</a>
-                    
-                    {% if 'prof' not in user_group %}
-                        <a href="{% url 'exportData' %}">Export data</a>
-                    {% endif %}
+            <div id="navB" class="grid grid-cols-6 my-transition">
+                {% include './components/sidebar.html' %}    
+        {% endif %}
 
-                    {% if 'admin' in user_group %}
-                        <a href="{% url 'formPage' %}">Forms</a>
-                        {% elif 'prof' in user_group %}
-                        <a href="{% url 'requestForm' %}">Request Schedule</a>
-                        {% endif %}
-                    </div>
-
-                <div class="flex gap-4 float-right total-unread">
-                    {% if notification_count.count <= 0 %}
-                        <button id="notification" onClick="notifClicked()">Notification</button>
-                        <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button>
-                    {% else %}
-                        <button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">{{notification_count.count}}</span></button>
-                        <button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">{{notification_count.count}}</span></button>
-                    {% endif %}
-
-                    <button id="profile" onClick="profileClicked()">Account</button>
-                    <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>
-                    {% comment %} <button>Settings</button> {% endcomment %}
-                </div>
-            </div>
-            <div id="notif-modal" class="hidden absolute bg-white right-7 top-12 mr-10 rounded-md shadow-md h-auto max-h-96 max-w-96 w-96 overflow-scroll scroll-smooth">
-                <div class="flex notif-status">
-                    {% if notification_count.count <= 0 %}
-                        <p class="p-4 text-sm text-center text-gray-500">No new notification.</p>
-                    {% else %}
-                        <button type="button" class="text-sm p-4 text-blue-500 cursor-pointer hover:bg-blue-100 float-right w-full text-center mark-all-read">Mark all as read</button>
-                    {% endif %}
-                </div>
-                <span class="notif-list ">
-                    {% for notif in notifications  %}
-                        {% if notif.read == True %}
-                            <a href="{% url 'requestDetails' pk=notif.sched_url %}" class="flex flex-col p-2 text-gray-600 border-2 hover:bg-gray-100 transition transition-delay-1 cursor-pointer">
-                                <span>{{notif.description}}</span>
-                                <span class="text-sm text-gray-400">{{notif.date_created}}<span>
-                            </a>
-                        {% else %}
-                            <a href="{% url 'requestDetails' pk=notif.sched_url %}" class="flex flex-col p-2 text-black border-2 bg-yellow-300 hover:bg-yellow-200 transition transition-delay-1 cursor-pointer">
-                                <span>{{notif.description}}</span>
-                                <span class="text-sm text-gray-600">{{notif.date_created}}<span>
-                            </a>
-                        {% endif %}
-                    {% endfor %}
-                </span>
-            </div>
-            
-            <span class="ajaxRes"></span>
-            <div id="profile-modal" class="hidden absolute bg-white right-0 top-12 mr-10 rounded-md shadow-md h-auto max-w-72 w-auto overflow-hidden">
-                <span class="flex flex-col">
-                    <a href="{% url 'profile' %}" class="font-bold p-4 hover:bg-gray-100 transition transition-delay-1">View profile</a>
-                    <a href="{% url 'logout' %}" class="font-bold p-4 hover:bg-gray-100 transition transition-delay-1">Logout</a>
-                </span>
-            </div>
-
-            {% else %}
-                <p class="p-2 bg-black text-white text-center"><a href="/" class="cursor-pointer">Computer Laboratory Management System</a> | Saint Jude College Manila</p>
-            {% endif %}
-
+        <div class="col-span-4">
             {% block content  %}
             {% endblock content %}
+        </div>
 
-            <footer class="bg-black p-8">
-                <p class="text-sm text-white text-center">Computer Laboratory Monitorig System @2022</p>
-            </footer>
-    </body>
-
-    <script>
-        var notifButton = document.getElementById("notification")
-        var notifButton2 = document.getElementById("notification2")
-        var notifModal = document.getElementById("notif-modal")
-
-        var profileModal = document.getElementById("profile-modal")
-        var profileButton = document.getElementById("profile")
-        var profileButton2 = document.getElementById("profile2")
-
-
-        function notifClicked() {
-            notifButton.classList.add('hidden');
-            notifButton2.classList.remove('hidden');
-            notifModal.classList.remove('hidden');
-        };
-
-        function notifClicked2() {
-            notifButton.classList.remove('hidden');
-            notifButton2.classList.add('hidden');
-            notifModal.classList.add('hidden');
-        };
+        {% if user.is_authenticated %}
+            {% include './components/updates.html' %}    
+        {% endif %}
+             
+        </div>  
+        {% comment %} {% include './components/footer.html' %} {% endcomment %}
         
-        function profileClicked() {
-            profileButton.classList.add('hidden');
-            profileButton2.classList.remove('hidden');
-            profileModal.classList.remove('hidden');
-        };
-
-        function profileClicked2() {
-            profileButton.classList.remove('hidden');
-            profileButton2.classList.add('hidden');
-            profileModal.classList.add('hidden');
-        };
-
-        document.addEventListener('mouseup', function(e) {
-            if (!notifModal.contains(e.target)) {
-                notifModal.classList.add('hidden');
-                profileModal.classList.add('hidden');
-            }
-        });
-    </script>
-    {% if user.is_authenticated %}
-        <script>
-            $(document).ready(function() {
-                $(".ajaxRes").hide();
-                setInterval(function() {
-                    $.ajax({
-                        url: "{% url 'getNotifs' %}",
-                        dataType: 'json',
-                        beforeSend:function() {
-                            $(".ajaxRes").show();
-                            $(".ajaxRes").text();
-                        },
-                        success:function(res) {
-                            _html='';
-                            _json = $.parseJSON(res.data);
-                            var monthNames = [
-                                "Jan.", "Feb.", "March",
-                                "Apr.", "May", "June", "July",
-                                "Aug.", "Sept.", "Oct.",
-                                "Nov.", "Dec."
-                            ];
-                            function addZero(i) {
-                                if (i < 10) {
-                                    i = "0" + i;
+        {% if user.is_authenticated %}
+            <script>
+                $(document).ready(function() {
+                    $(".ajaxRes").hide();
+                    setInterval(function() {
+                        $.ajax({
+                            url: "{% url 'getNotifs' %}",
+                            dataType: 'json',
+                            beforeSend:function() {
+                                $(".ajaxRes").show();
+                                $(".ajaxRes").text();
+                            },
+                            success:function(res) {
+                                _html='';
+                                _json = $.parseJSON(res.data);
+                                var monthNames = [
+                                    "Jan.", "Feb.", "March",
+                                    "Apr.", "May", "June", "July",
+                                    "Aug.", "Sept.", "Oct.",
+                                    "Nov.", "Dec."
+                                ];
+                                function addZero(i) {
+                                    if (i < 10) {
+                                        i = "0" + i;
+                                    }
+                                
+                                    return i;
                                 }
-                            
-                                return i;
-                            }
-                            function get_date(date){
-                                var date = new Date(date);
-                                var day = date.getDate();
-                                var monthIndex = date.getMonth();
-                                var year = date.getFullYear();
-                                var hours = addZero(date.getHours());
-                                var minutes = addZero(date.getMinutes());
-                            
-                                return monthNames[monthIndex] + " " + day + " " + year;
-                            }
-                            
-                            $.each(_json, function(index, d) {
-                                if(d.fields.read){
-                                    
-                                    _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-600 border-2 hover:bg-gray-100 transition transition-delay-1 cursor-pointer"><span>'+ d.fields.description +'</span> <span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span></a>';
-                                    }else {
-                                        _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-700 border-2 bg-yellow-300 hover:bg-yellow-200 transition transition-delay-1 cursor-pointer"><span>'+ d.fields.description +'</span> <span class="text-sm text-gray-600">'+ get_date(d.fields.date_created) +'<span></a>';
+                                function get_date(date){
+                                    var date = new Date(date);
+                                    var day = date.getDate();
+                                    var monthIndex = date.getMonth();
+                                    var year = date.getFullYear();
+                                    var hours = addZero(date.getHours());
+                                    var minutes = addZero(date.getMinutes());
+                                
+                                    return monthNames[monthIndex] + " " + day + " " + year;
                                 }
                                 
-                            });
-        
-                            $('.notif-list').html(_html);
-                            $(".ajaxRes").hide();
-                        }
-                    })
-                }, 3000)
-            });
-
-            $(document).on("click", ".mark-all-read", function() {
-                $.ajax({
-                    url: "{% url 'clearNotification' %}"
-                });
-            });
-
-            $(document).ready(function() {
-                $(".ajaxRes").hide();
-                setInterval(function() {
-                    $.ajax({
-                        url: "{% url 'getNotifs' %}",
-                        dataType: 'json',
-                        beforeSend:function() {
-                            $(".ajaxRes").show();
-                            $(".ajaxRes").text();
-                        },
-                        success:function(res) {
-                            _totalUnread = '';
-                            _notifStatus='';
-                            _json = $.parseJSON(res.totalUnread);
-
-                            if(_json > 0) {
-                                _notifStatus='<button type="button" class="text-sm p-4 text-blue-500 cursor-pointer hover:bg-blue-100 float-right w-full text-center mark-all-read">Mark all as read</button>'
-                                _totalUnread += '<button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button><button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
-                            } else {
-                                _notifStatus='<p class="p-4 text-sm text-center text-gray-500">No new notification.</p>'
-                                _totalUnread += '<button id="notification" onClick="notifClicked()">Notification</button> <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
-                            }
-
-                            $('.notif-status').html(_notifStatus);
-                            $('.total-unread').html(_totalUnread);
-                            $(".ajaxRes").hide();
-                        }
-                    })
-                }, 3000)
-            });
+                                $.each(_json, function(index, d) {
+                                    if(d.fields.read){
+                                        _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-600 hover:bg-gray-100 transition transition-delay-1 cursor-pointer"><span class="font-normal"><span class="font-bold">' + d.fields.notif_for + '</span>: <span class="text-sm">' + d.fields.description +'</span></span><span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span></a>';
+                                    }else {
+                                        _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-600 hover:bg-gray-100 transition transition-delay-1 cursor-pointer bg-purple-100 hover:bg-purple-200"><span class="font-normal"><span class="font-bold">' + d.fields.notif_for + '</span>: <span class="text-sm">' + d.fields.description +'</span></span><span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span></a>';
+                                    }
+                                    
+                                });
             
+                                $('.notif-list').html(_html);
+                                $(".ajaxRes").hide();
+                            }
+                        })
+                    }, 3000)
+                });
+
+                $(document).on("click", ".mark-all-read", function() {
+                    $.ajax({
+                        url: "{% url 'clearNotification' %}"
+                    });
+                });
+
+                $(document).ready(function() {
+                    $(".ajaxRes").hide();
+                    setInterval(function() {
+                        $.ajax({
+                            url: "{% url 'getNotifs' %}",
+                            dataType: 'json',
+                            beforeSend:function() {
+                                $(".ajaxRes").show();
+                                $(".ajaxRes").text();
+                            },
+                            success:function(res) {
+                                _totalUnread = '';
+                                _notifStatus='';
+                                _json = $.parseJSON(res.totalUnread);
+
+                                if(_json > 0) {
+                                    _notifStatus='<button type="button" class="text-sm pb-1 text-blue-500 cursor-pointer float-right w-full mark-all-read">Mark all as read</button>'
+                                    _totalUnread += '<button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button><button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
+                                } else {
+                                    _notifStatus='<p class="text-gray-600 text-sm text-center py-1">No new updates.</p>'
+                                    _totalUnread += '<button id="notification" onClick="notifClicked()">Notification</button> <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
+                                }
+
+                                $('.notif-status').html(_notifStatus);
+                                $('.total-unread').html(_totalUnread);
+                                $(".ajaxRes").hide();
+                            }
+                        })
+                    }, 3000)
+                });
+                
+            </script>
+        {% endif %}
+        <script>
+            var openM = document.getElementById("openM")
+            var sideB = document.getElementById("sideB")
+            var navB = document.getElementById("navB")
+
+            function openMenu() {
+                openM.classList.add("md:hidden")
+                navB.classList.add("md:ml-60")
+                sideB.classList.remove("w-0")
+                sideB.classList.add("md:w-60")
+            }
+            
+            function closeMenu() {
+                openM.classList.remove("md:hidden")
+                navB.classList.remove("md:ml-60")
+                sideB.classList.add("w-0")
+                sideB.classList.remove("md:w-60")
+            }
         </script>
-    {% endif %}
+    </body>
 </html>

@@ -1,22 +1,26 @@
 {% extends '../base.html' %}
-{% block title %}Schedule{% endblock  %}
+
+{% block title %}Schedule | Rejected{% endblock  %}
 {% block content %}
-<div class="py-4 mx-10 h-screen">
-    <p class="text-2xl text-gray-600 p-4">Pending Request Schedules</p>
+<div class="flex flex-col gap-4 pb-10 px-4">
+    <p class="text-2xl py-4 font-bold">Rejected Schedules</p>
+    <div class="flex">
+        <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
+    </div>
     <div class='flex justify-center'>
         <div class="bg-white rounded-md shadow-md">
             <table class="border-separate rounded-md shadow-md">
-                <tr class="border boreder-2 text-center text-white bg-green-500 rounded-md">
-                    <th class="p-4 rounded-md">DATE CREATED</th>
-                    <th class="p-4 rounded-md">REQUESTED BY</th>
-                    <th class="p-4 rounded-md">REQUEST DATE</th>
-                    <th class="p-4 rounded-md">TIME IN</th>
-                    <th class="p-4 rounded-md">TIME OUT</th>
-                    <th class="p-4 rounded-md">YEAR LEVEL</th>
-                    <th class="p-4 rounded-md">SECTION</th>
-                    <th class="p-4 rounded-md">STUDENT COUNT</th>
-                    <th class="p-4 rounded-md">STATUS</th>
-                    <th class="p-4 rounded-md">INFO</th>
+                <tr class="border boreder-2 text-center text-white bg-purple-500 rounded-md">
+                    <th class="p-2 rounded-md">DATE CREATED</th>
+                    <th class="p-2 rounded-md">REQUESTED BY</th>
+                    <th class="p-2 rounded-md">REQUEST DATE</th>
+                    <th class="p-2 rounded-md">TIME IN</th>
+                    <th class="p-2 rounded-md">TIME OUT</th>
+                    <th class="p-2 rounded-md">YEAR LEVEL</th>
+                    <th class="p-2 rounded-md">SECTION</th>
+                    <th class="p-2 rounded-md">STUDENT COUNT</th>
+                    <th class="p-2 rounded-md">STATUS</th>
+                    <th class="p-2 rounded-md">INFO</th>
                 </tr>
                 {% if schedCount < 1 %}
                     <tr>
@@ -43,7 +47,7 @@
                 {% endfor %}
             </table>
             <div class="flex gap-2 items-center mx-2">
-                <p class="px-4 py-2 float-left text-md text-green-600">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</p>
+                <p class="px-4 py-2 float-left text-md text-purple-600">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</p>
                 <div class="flex gap-2 justify-end">
     
                     {% if page_obj.has_previous %}

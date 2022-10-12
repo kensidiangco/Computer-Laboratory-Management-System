@@ -8,6 +8,7 @@ from datetime import datetime, date, time
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
+from ...decorators import admin_pending_sched_view_only, admin_approved_sched_view_only, admin_rejected_sched_view_only, admin_done_sched_view_only, admin_ongoing_sched_view_only
 from CLMS.apps.account.models import Notification
 from .models import Approved_Schedule, Rejected_Schedule, Student, Sched_Request, Sched_Time_Usage
 from django.http import JsonResponse 
@@ -51,6 +52,7 @@ def studentListExport(request):
     # return the response
     return response
     
+@login_required(login_url=reverse_lazy("loginPage"))
 def transactionIndexPage(request):
     return render(request, './transaction/index.html')
 
@@ -86,7 +88,7 @@ def requestForm(request):
             Notification.objects.create(
                 receiver=User.objects.get(username='dean'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Schedule',
                 description='New schedule request',
                 sched_url=sched.pk
             )
@@ -94,7 +96,7 @@ def requestForm(request):
             Notification.objects.create(
                 receiver=User.objects.get(username='itdept'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Schedule',
                 description='New schedule request',
                 sched_url=sched.pk
             )
@@ -120,18 +122,22 @@ def requestForm(request):
         'studentForm': studentForm,
     })
 
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_pending_sched_view_only
 def requestList(request):
     scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     schedCount = len(scheds)
     context = {
         'scheds': scheds,
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
+        'date_today': date_today
     }
 
     return render(request, './transaction/requestList.html', context)
@@ -143,11 +149,12 @@ def requestDetails(request, pk):
     group = list(request.user.groups.values_list('name', flat = True))
     
     students = requestDetails.student_set.all().order_by("last_name")
-    paginator = Paginator(students, 10)
+    paginator = Paginator(students, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     approvedId = Approved_Schedule.objects.filter(sched=requestDetails)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     if request.method == 'POST':
         if 'approve_sched' in request.POST:
@@ -170,15 +177,15 @@ def requestDetails(request, pk):
             Notification.objects.create(
                 receiver=User.objects.get(username=sched.requester.username),
                 sender=request.user,
-                notif_for='schedule',
-                description='Your request for {} is approved by {}'.format(sched.date_request, request.user),
+                notif_for='Schedule',
+                description='Your request for {} is approved by {}'.format(sched.date_request.strftime('%B %d, %Y'), request.user),
                 sched_url=sched.pk
             )
 
             Notification.objects.create(
                 receiver=User.objects.get(username='itdept'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Schedule',
                 description='{} schedule requested is approved by {}'.format(sched.date_request, request.user),
                 sched_url=sched.pk
             )
@@ -195,7 +202,7 @@ def requestDetails(request, pk):
             Notification.objects.create(
                 receiver=User.objects.get(username=sched.requester.username),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Schedule',
                 description='Your request for {} is rejected by {}'.format(sched.date_request, request.user),
                 sched_url=sched.pk
             )
@@ -203,7 +210,7 @@ def requestDetails(request, pk):
             Notification.objects.create(
                 receiver=User.objects.get(username='itdept'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Schedule',
                 description='{} schedule requested is rejected by {}'.format(sched.date_request, request.user),
                 sched_url=sched.pk
             )
@@ -226,7 +233,7 @@ def requestDetails(request, pk):
             Notification.objects.create(
                 receiver=User.objects.get(username='itdept'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Time in',
                 description='{} has occupied comlab as of {}'.format(request.user, datetime.now().strftime("%B %d, %Y at %H:%M")),
                 sched_url=sched.pk
             )
@@ -234,7 +241,7 @@ def requestDetails(request, pk):
             Notification.objects.create(
                 receiver=User.objects.get(username='dean'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Time in',
                 description='{} has occupied comlab as of {}'.format(request.user, datetime.now().strftime("%B %d, %Y at %H:%M")),
                 sched_url=sched.pk
             )
@@ -251,7 +258,7 @@ def requestDetails(request, pk):
             Notification.objects.create(
                 receiver=User.objects.get(username='itdept'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Time out',
                 description='{} left the comlab at {}'.format(request.user, datetime.now().strftime("%H:%M")),
                 sched_url=sched.pk
             )
@@ -259,7 +266,7 @@ def requestDetails(request, pk):
             Notification.objects.create(
                 receiver=User.objects.get(username='dean'),
                 sender=request.user,
-                notif_for='schedule',
+                notif_for='Time out',
                 description='{} left the comlab at {}'.format(request.user, datetime.now().strftime("%H:%M")),
                 sched_url=sched.pk
             )
@@ -291,7 +298,8 @@ def requestDetails(request, pk):
             'time_usage': time_usage,
             'hour': h,
             'min': m,
-            'sec': s
+            'sec': s,
+            'date_today': date_today
         }
         return render(request, './transaction/requestDetails.html', context)
     except:
@@ -299,67 +307,84 @@ def requestDetails(request, pk):
             'requestDetails': requestDetails,
             'page_obj': page_obj, 
             'group': group,
+            'date_today': date_today
         }
         return render(request, './transaction/requestDetails.html', context)
 
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_approved_sched_view_only
 def approvedRequest(request):
     approved = Sched_Request.objects.filter(status='Approved').order_by('date_created')
     schedCount = len(approved)
     paginator = Paginator(approved, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     context = {
         'approved': approved,
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
+        'date_today': date_today
     }
 
     return render(request, './transaction/approvedRequest.html', context)
 
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_rejected_sched_view_only
 def rejectedRequest(request):
     rejected = Sched_Request.objects.filter(status='Rejected').order_by('date_created')
     schedCount = len(rejected)
     paginator = Paginator(rejected, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     context = {
         'rejected': rejected,
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
+        'date_today': date_today
     }
 
     return render(request, './transaction/rejectedRequest.html', context)
     
+@login_required(login_url=reverse_lazy("loginPage"))
 def getNotifs(request):
-    data = Notification.objects.filter(receiver=request.user).order_by('-date_created')
+    data = Notification.objects.filter(receiver=request.user).order_by('-date_created')[:3]
     jsonData = serializers.serialize('json', data)
     totalUnread = Notification.objects.filter(read=False, receiver=request.user).count()
 
     return JsonResponse({'data': jsonData, 'totalUnread': totalUnread})
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def clearNotification(request):
     notifications = Notification.objects.filter(read=False, receiver=request.user) 
     notifications.update(read=True)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_ongoing_sched_view_only
 def onGoingSchedule(request):
     onGoing = Sched_Request.objects.filter(status="On Going")
     schedCount = len(onGoing)
     paginator = Paginator(onGoing, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     context = {
         'onGoing': onGoing,
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
+        'date_today': date_today
     }
 
     return render(request, './transaction/onGoingSchedule.html', context)
 
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_done_sched_view_only
 def doneSchedule(request):
     doneSched = Sched_Request.objects.filter(status="Done")
 
@@ -367,14 +392,116 @@ def doneSchedule(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     schedCount = len(doneSched)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     context = {
         'doneSched': doneSched,
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
+        'date_today': date_today
     }
 
     return render(request, './transaction/doneSchedule.html', context)
+
+@login_required(login_url=reverse_lazy("loginPage"))
+def Prof_Pending_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount,
+        'date_today': date_today
+    }
+
+    return render(request, './transaction/prof_view/pending_schedule.html', context)
+
+@login_required(login_url=reverse_lazy("loginPage"))
+def Prof_Approved_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Approved").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount,
+        'date_today': date_today
+    }
+
+    return render(request, './transaction/prof_view/approved_schedule.html', context)
+
+@login_required(login_url=reverse_lazy("loginPage"))
+def Prof_Rejected_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Rejected").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount,
+        'date_today': date_today
+    }
+
+    return render(request, './transaction/prof_view/rejected_schedule.html', context)
+
+@login_required(login_url=reverse_lazy("loginPage"))
+def Prof_Ongoing_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="On Going").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount,
+        'date_today': date_today
+    }
+
+    return render(request, './transaction/prof_view/ongoing_schedule.html', context)
+
+@login_required(login_url=reverse_lazy("loginPage"))
+def Prof_Done_Schedule(request):
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Done").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+
+    context = {
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount,
+        'date_today': date_today
+    }
+
+    return render(request, './transaction/prof_view/done_schedule.html', context)
 
 def render_to_pdf(template_src, context_dict={}):
 	template = get_template(template_src)
@@ -384,87 +511,7 @@ def render_to_pdf(template_src, context_dict={}):
 	if not pdf.err:
 		return HttpResponse(result.getvalue(), content_type='application/pdf')
 	return None
-
-def Prof_Pending_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('date_created')
-    paginator = Paginator(scheds, 5)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    schedCount = len(scheds)
-    context = {
-        'scheds': scheds,
-        'page_obj': page_obj,
-        'schedCount': schedCount
-    }
-
-    return render(request, './transaction/prof_view/pending_schedule.html', context)
-
-def Prof_Approved_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Approved").order_by('date_created')
-    paginator = Paginator(scheds, 5)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    schedCount = len(scheds)
-    context = {
-        'scheds': scheds,
-        'page_obj': page_obj,
-        'schedCount': schedCount
-    }
-
-    return render(request, './transaction/prof_view/approved_schedule.html', context)
-
-def Prof_Rejected_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Rejected").order_by('date_created')
-    paginator = Paginator(scheds, 5)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    schedCount = len(scheds)
-    context = {
-        'scheds': scheds,
-        'page_obj': page_obj,
-        'schedCount': schedCount
-    }
-
-    return render(request, './transaction/prof_view/rejected_schedule.html', context)
-
-def Prof_Ongoing_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="On Going").order_by('date_created')
-    paginator = Paginator(scheds, 5)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    schedCount = len(scheds)
-    context = {
-        'scheds': scheds,
-        'page_obj': page_obj,
-        'schedCount': schedCount
-    }
-
-    return render(request, './transaction/prof_view/ongoing_schedule.html', context)
-
-def Prof_Done_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Done").order_by('date_created')
-    paginator = Paginator(scheds, 5)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    schedCount = len(scheds)
-    context = {
-        'scheds': scheds,
-        'page_obj': page_obj,
-        'schedCount': schedCount
-    }
-
-    return render(request, './transaction/prof_view/done_schedule.html', context)
-
+    
 class ViewPDF(View):
     def get(self, request, *args, **kwargs):
         data = {
@@ -487,8 +534,10 @@ class DownloadPDF(View):
         response['Content-Disposition'] = content
         return response
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def exportData(request):
     scheds = Sched_Request.objects.all()
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     if request.method == "POST":
         DateFrom = request.POST.get('dateFrom')
@@ -557,7 +606,8 @@ def exportData(request):
 
     context = {
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
+        'date_today': date_today
     }
 
     return render(request, './transaction/exportData.html', context)

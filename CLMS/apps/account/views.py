@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.contrib import messages
 from ...decorators import dean_only, unauthenticated_user, admin_only, ITDept_only, prof_only
 from django.contrib.auth.models import Group
-from .models import Theme, Profile
+from .models import Notification, Theme, Profile
 from ..transaction.models import Sched_Request
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -21,6 +21,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib import messages
+from datetime import datetime
 
 def password_reset_request(request):
 	if request.method == "POST":
@@ -135,9 +136,11 @@ def loginPage(request):
             
     return render(request, './account/login.html')
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def profile(request):
     return render(request, './account/profile.html')
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def index(request):
 
     if Theme.objects.filter(user=request.user.username).exists():
@@ -151,6 +154,7 @@ def index(request):
 
     return render(request, './index.html', context)
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def theme(request):
     color = request.GET.get('color')
 
@@ -178,7 +182,12 @@ def theme(request):
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def formPage(request):
-    return render(request, './account/forms.html')
+    active_user = User.objects.all()
+
+    context = {
+        'active_user': active_user
+    }
+    return render(request, './account/forms.html', context)
     
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_only
@@ -188,6 +197,15 @@ def adminDashboard(request):
     rejected = Sched_Request.objects.filter(status="Rejected")
     onGoing = Sched_Request.objects.filter(status="On going")
     done = Sched_Request.objects.filter(status="Done")
+
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
 
     if Theme.objects.filter(user=request.user.username).exists():
         color = Theme.objects.get(user=request.user.username).color
@@ -200,7 +218,11 @@ def adminDashboard(request):
         'approved': approved,
         'rejected': rejected,
         'onGoing': onGoing,
-        'done': done
+        'done': done,
+        'date_today': date_today,
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount,
     }
     return render(request, './account/admin/dashboard.html', context)
 
@@ -213,6 +235,15 @@ def deanDashboard(request):
     onGoing = Sched_Request.objects.filter(status="On going")
     done = Sched_Request.objects.filter(status="Done")
 
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+
     if Theme.objects.filter(user=request.user.username).exists():
         color = Theme.objects.get(user=request.user.username).color
     else:
@@ -224,7 +255,11 @@ def deanDashboard(request):
         'approved': approved,
         'rejected': rejected,
         'onGoing': onGoing,
-        'done': done
+        'done': done,
+        'date_today': date_today,
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount
     }
     return render(request, './account/dean/deanDashboard.html', context)
 
@@ -236,6 +271,15 @@ def ITDeptDashboard(request):
     rejected = Sched_Request.objects.filter(status="Rejected")
     onGoing = Sched_Request.objects.filter(status="On going")
     done = Sched_Request.objects.filter(status="Done")
+    
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
 
     if Theme.objects.filter(user=request.user.username).exists():
         color = Theme.objects.get(user=request.user.username).color
@@ -248,7 +292,11 @@ def ITDeptDashboard(request):
         'approved': approved,
         'rejected': rejected,
         'onGoing': onGoing,
-        'done': done
+        'done': done,
+        'date_today': date_today,
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount
     }
     return render(request, './account/itdept/dashboard.html', context)
 
@@ -260,13 +308,22 @@ def userLogout(request):
 @login_required(login_url=reverse_lazy("loginPage"))
 @prof_only
 def profDashboard(request):
-    sched = Sched_Request.objects.filter(requester=request.user.id)
+    sched = Sched_Request.objects.filter(requester=request.user)
 
     pendingSched = sched.filter(status="Pending")
     onGoingSched = sched.filter(status="On Going")
     doneSched = sched.filter(status="Done")
     approvedSched = sched.filter(status="Approved")
     rejectedSched = sched.filter(status="Rejected")
+
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('date_created')
+    paginator = Paginator(scheds, 5)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    schedCount = len(scheds)
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     # pendingSchedPaginator = Paginator(pendingSched, 5)
     # page_number = request.GET.get('page')
@@ -294,9 +351,42 @@ def profDashboard(request):
         'doneSched': doneSched,
         'approvedSched': approvedSched,
         'rejectedSched': rejectedSched,
-        'sched': sched
+        'sched': sched,
+        'scheds': scheds,
+        'page_obj': page_obj,
+        'schedCount': schedCount,
+        'date_today':date_today
     }
     return render(request, './account/prof/profDashboard.html', context)
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def About_Us(request):
     return render(request, './about_us.html')
+
+def notification_page(request):
+    notifs = Notification.objects.filter(receiver=request.user).order_by('-date_created')
+
+    if request.method == 'POST':
+        if 'All' in request.POST:
+            notifs = Notification.objects.filter(receiver=request.user).order_by('-date_created')
+            notifs_count = Notification.objects.filter(receiver=request.user).order_by('-date_created').count
+            return render(request, './account/notification.html', {
+                'notifs': notifs,
+                'notifs_count': notifs_count
+            })
+
+
+        if 'Unread' in request.POST:
+            notifs = Notification.objects.filter(receiver=request.user, read=False).order_by('-date_created')
+            notifs_count = Notification.objects.filter(receiver=request.user, read=False).order_by('-date_created').count
+            return render(request, './account/notification.html', {
+                'notifs': notifs,
+                'notifs_count': notifs_count
+            })
+
+    else:
+        context = {
+            'notifs': notifs
+        }
+
+        return render(request, './account/notification.html', context)

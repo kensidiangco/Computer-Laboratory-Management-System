@@ -1,3 +1,4 @@
+from ast import Name
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -85,5 +86,70 @@ def dean_only(view_func):
             return HttpResponseRedirect(reverse('profDashboard'))
             
         elif group == 'dean':
+            return view_func(request, *args, **kwargs)
+    return wrapper
+
+def admin_pending_sched_view_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+        
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('Prof_Pending_Schedule'))
+            
+        else:
+            return view_func(request, *args, **kwargs)
+    return wrapper
+
+def admin_approved_sched_view_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+        
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('Prof_Approved_Schedule'))
+            
+        else:
+            return view_func(request, *args, **kwargs)
+    return wrapper
+
+def admin_rejected_sched_view_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+        
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('Prof_Rejected_Schedule'))
+            
+        else:
+            return view_func(request, *args, **kwargs)
+    return wrapper
+
+def admin_ongoing_sched_view_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+        
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('Prof_Ongoing_Schedule'))
+            
+        else:
+            return view_func(request, *args, **kwargs)
+    return wrapper
+
+def admin_done_sched_view_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        group = None
+        if request.user.groups.exists():
+            group = request.user.groups.all()[0].name
+        
+        if group == 'prof':
+            return HttpResponseRedirect(reverse('Prof_Done_Schedule'))
+            
+        else:
             return view_func(request, *args, **kwargs)
     return wrapper
