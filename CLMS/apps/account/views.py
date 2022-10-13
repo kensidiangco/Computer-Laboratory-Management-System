@@ -44,11 +44,11 @@ def password_reset_request(request):
 					}
 					email = render_to_string(email_template_name, c)
 					try:
+                        # messages.success(request, "A message with reset password instructions has been sent to your inbox.")
 						send_mail(subject, email, 'admin@example.com' , [user.email], fail_silently=False)
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')
                         
-                    # messages.success(request, "A message with reset password instructions has been sent to your inbox.")
 					return redirect ("/password_reset/done/")
 	password_reset_form = PasswordResetForm()
 	return render(request=request, template_name="account/password/password_reset.html", context={"password_reset_form":password_reset_form})
@@ -128,7 +128,7 @@ def loginPage(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(reverse('adminDashboard'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:
@@ -139,8 +139,8 @@ def loginPage(request):
 @login_required(login_url=reverse_lazy("loginPage"))
 def profile(request):
     return render(request, './account/profile.html')
-
-@login_required(login_url=reverse_lazy("loginPage"))
+    
+@unauthenticated_user
 def index(request):
 
     if Theme.objects.filter(user=request.user.username).exists():
@@ -359,7 +359,6 @@ def profDashboard(request):
     }
     return render(request, './account/prof/profDashboard.html', context)
 
-@login_required(login_url=reverse_lazy("loginPage"))
 def About_Us(request):
     return render(request, './about_us.html')
 

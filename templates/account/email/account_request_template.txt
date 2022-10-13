@@ -1,0 +1,13 @@
+{% autoescape off %}
+Hello,
+
+We received an account registration request.
+
+{{ email }} is requested to have an account to our system. 
+
+If you are busy, you can simply ignore this email.
+
+Sincerely,
+The CLMS Team
+
+{% endautoescape %}

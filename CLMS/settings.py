@@ -50,7 +50,7 @@ INTERNAL_IPS = [
 
 # Auth config
 LOGIN_URL = './account/login'
-LOGOUT_REDIRECT_URL = './account/profile'
+LOGOUT_REDIRECT_URL = './index'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

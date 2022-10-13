@@ -7,7 +7,7 @@ def unauthenticated_user(view_func):
     def wrapper(request, *args, **kwargs):
         
         if request.user.is_authenticated:
-            return HttpResponseRedirect(reverse('index'))
+            return HttpResponseRedirect(reverse('adminDashboard'))
         else:
             return view_func(request, *args, **kwargs)
     return wrapper

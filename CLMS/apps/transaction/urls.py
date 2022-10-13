@@ -26,4 +26,5 @@ urlpatterns = [
     path('data/export', views.exportData, name="exportData"),
     path('data/pdf/', views.ViewPDF.as_view(), name="ViewPDF"),
 
+    path('account/request', views.request_account, name="request_account"),
 ]

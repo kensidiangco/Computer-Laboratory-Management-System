@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
+from django.contrib import messages
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def studentListExport(request):
@@ -125,7 +126,7 @@ def requestForm(request):
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_pending_sched_view_only
 def requestList(request):
-    scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('-date_request')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
@@ -405,7 +406,7 @@ def doneSchedule(request):
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def Prof_Pending_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('date_created')
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('-date_request')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
@@ -611,3 +612,27 @@ def exportData(request):
     }
 
     return render(request, './transaction/exportData.html', context)
+
+def request_account(request):
+
+    if request.method == 'POST':
+        if 'email_request' in request.POST:
+            email_request = request.POST.get('email_request')
+            subject = "Account Registration Request!"
+            email_template_name = "account/email/account_request_template.txt"
+            c = {
+                "email":"kensidiangco@gmail.com",
+                'domain':'127.0.0.1:8000',
+                'site_name': 'Website',
+                'protocol': 'http',
+                'email' : email_request
+            }
+            email = render_to_string(email_template_name, c)
+            try:
+                messages.success(request, "Request submitted successfully.")
+                send_mail(subject, email, 'admin@example.com' , ['kensidiangco@gmail.com', 'jore.sidiangco.sjc@phinmaed.com', 'nisu.marcelo.sjc@phinmaed.com', 'jhpa.carag.sjc@phinmaed.com'], fail_silently=False)
+            except BadHeaderError:
+                messages.error(request, "Request fail to submit.")
+                return HttpResponse('Invalid header found.')
+
+    return render(request, './transaction/request_account.html')

@@ -14,7 +14,7 @@ class ScheduleRequestForm(forms.ModelForm):
                 'required': '',
             }),
             'year_level': forms.TextInput(attrs={
-                'placeholder':'Year_level',
+                'placeholder':'Year level',
                 'class': 'rounded-md transition transition-delay-2',
                 'autocapitalize':'none',
                 'id':'username',

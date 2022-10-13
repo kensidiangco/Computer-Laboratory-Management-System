@@ -2,50 +2,66 @@
 {% load tailwind_tags %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-gradient-to-r from-pink-50 via-slate-100 to-purple-100 backdrop backdrop-blur-xl">
     <head>
-        <title>SJC-CLMS</title>
+        <title>CLMS</title>
         {% tailwind_css %}
         <link rel="stylesheet" href="{% static 'index.css' %}">
+        <style>
+            .my-transition{
+                -webkit-transition: all 0.5s ease-in-out;
+                -moz-transition:all 0.5s ease-in-out;
+                -o-transition:all 0.5s ease-in-out;
+                transition:all 0.5s ease-in-out;
+            }
+            /* width */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+            
+            /* Track */
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1; 
+            }
+             
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+                background: #888; 
+            }
+            
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555; 
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+        </style>
     </haed>
 
-    <body class="bg-gray-50">
-        <p class="p-2 bg-black text-white text-center">
-            <a href="{% url 'About_Us' %}" class="cursor-pointer">BSIT Capstone Group 9</a>
-            | Saint Jude College Manila
-        </p>
-        {% comment %} {% if color == 'light' %}
-            <link rel="stylesheet" type="text/css" href="{% static 'account/lightIndex.css' %}">
-        {% else %}
-            <link rel="stylesheet" type="text/css" href="{% static 'account/darkIndex.css' %}">
-        {% endif %}
-        {% if request.user.is_authenticated %}
-            <a href="{% url 'logout' %}">Logout<a>
-        {% endif %}{% endcomment %}
-
-        <div class="flex flex-col">
-            <div class="p-16 text-center bg-black text-black flex flex-col gap-12 items-center shadow-md">
-                <p class="text-5xl font-serif font-bold text-white">Computer Laboratory Management System<p>
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'adminDashboard' %}" class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm">Dashboard<a>
-                    {% if 'prof' in user_group %}
-                        <a class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
-                    {% endif %}
-                    {% else %}
-                    <a class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm" href="{% url 'loginPage' %}">Login to your account</a>
-                    <a class="p-4 bg-white hover:bg-gray-100 transition transition-delay-1 text-black rounded-md shadow-sm" href="{% url 'requestForm' %}">Request Schedule</a>
-                {% endif %}
+    <body>
+        {% comment %} <div style="height: 150px; overflow: hidden;" class="absolute top-0 w-full drop-shadow-2xl">
+            <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
+                <path d="M0.00,92.27 C216.83,192.92 304.30,8.39 500.00,109.03 L500.00,0.00 L0.00,0.00 Z" style="stroke: none;fill: #F8F8FF;"></path>
+            </svg>
+        </div> {% endcomment %}
+        {% include './components/unauthenticatedNavigation.html' %}
+        <div class="flex flex-col xl:flex-row justify-center items-center gap-4 py-8 xl:py-0">
+            <div class="">
+                <p class="py-1 text-5xl text-purple-700 subpixel-antialiased">Computer Laboratory</p>
+                <p class="py-1 text-5xl text-purple-700 subpixel-antialiased">Management System</p>
+                <p class="py-1 text-3xl text-purple-600 antialiased">Makes our lives easier</p>
+                {% comment %} <button onclick="window.location.href='/about'" class="mt-2 bg-purple-600 hover:bg-purple-500 text-white transition-all rounded-xl p-3 shadow-xl">Contact Us</button> {% endcomment %}
+                <div class="flex gap-4 items-center justify-center py-6">
+                    <a href="https://web.facebook.com/KKENN21" target="_blank"><img src="{% static './images/fb.png' %}" class="w-6"/></a>
+                    <a href="https://www.instagram.com/kensidiangco/" target="_blank"><img src="{% static './images/ig.png' %}" class="w-11"/></a>
+                    <a href="https://github.com/kensidiangco" target="_blank"><img src="{% static './images/gh.png' %}" class="w-6"/></a>
+                </div>
             </div>
-
-            <div class="h-screen" id="bgImage">
-            </div>
-
-            {% comment %} <a href="{% url 'loginPage' %}">Login your account.</a>
-            <a href="{% url 'registerPage' %}">Register prof account.</a>
-            <a href="{% url 'ITDeptAccountRegister' %}">Register IT Dept account.</a> {% endcomment %}
+            <img src="{% static "./images/index-vector.svg" %}" class="w-96 xl:w-2/5 p-8 drop-shadow-2xl">
         </div>
-        <footer class="bg-black p-8">
-            <p class="text-sm text-white text-center">Computer Laboratory Monitorig System @2022</p>
-        </footer>
+        {% comment %} <div class="z-50 h-screen" id="bgImage">
+        </div> {% endcomment %}
+        {% include './components/footer.html' %}
     </body>
 </html>

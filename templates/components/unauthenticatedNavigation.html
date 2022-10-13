@@ -1,0 +1,13 @@
+<div class="flex justify-between backdrop backdrop-blur-xl transition-all bg-white/30 p-4 px-8 text-purple-800 shadow-sm items-center">
+    <div class="flex gap-8">
+        <a href="/" class="hover:text-purple-600 font-bold">CLMS</a>
+        <a href="{% url 'About_Us' %}" class="hover:text-purple-600">About us</a>
+    </div>
+    <div class="flex gap-4 items-center">
+        {% if user.is_authenticated %}
+        {% else %}
+            <a href="{% url 'loginPage' %}" class="hover:text-purple-600">Login</a>
+        {% endif %}
+        <a href="{% url 'request_account' %}" class="border-2 border-purple-600 hover:border-purple-400 hover:text-purple-600 transition-all rounded-xl p-2">Request account</a>
+    </div>
+</div>

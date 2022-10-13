@@ -14,30 +14,33 @@
       }
     </style>
   </haed>
-
+  {% if user.is_authenticated %}
+  {% else %}
+      {% include './components/unauthenticatedNavigation.html' %}
+  {% endif %}
   <div class="md:px-24 py-8">
-      <div class="bg-white p-8 shadow-xl flex flex-col gap-4 rounded-xl">
-        <div class="flex flex-col gap-4">
+      <div class="backdrop-blur-2xl p-8 drop-shadow-xl flex flex-col gap-4 rounded-xl">
+        <div class="flex flex-col gap-4 backdrop backdrop-blur-2xl rounded-xl p-4 bg-white/60">
           <p class="text-3xl font-bold">About website.</p>
           <p class="text-xl mx-8">Computer Laboratory Management System is about requesting a schedule for using a computer laboratory inside Saint Jude College Manila School and it's up to deans and IT Department if they will approve or reject the schedule requests of the professor. The website has a features of account handling, submission of the class data, notification system and emailing system to monitor all of the datas that will be inputed to the system. all of the datas that will be submitted to the system are safe.</p>
         </div>
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-6 backdrop backdrop-blur-2xl rounded-xl p-4 bg-white/60">
           <p class="text-3xl font-bold">Developers:</p>
           <div class="flex flex-wrap gap-8 p-2 justify-center items-center">
-            <div class="bg-gray-100 rounded-xl shadow-md">
+            <div class="bg-gray-100 rounded-xl">
               <img src="{% static './images/kensidiangco.jpg' %}" class="rounded-xl me" />
               <p class="text-xl font-bold mx-6">Sidiangco, John Keneth</p>
               <p class="text-xl font-bold mx-6">kensidiangco@gmail.com</p>
               <p class="text-xl font-bold mx-6 pb-4">Full Stack Developer</p>
             </div>
-            <div class="bg-gray-100 rounded-xl shadow-md">
-              <img class="img" src="{% static './images/nikkimarcelo.jpg' %}" width={340} height={340} class="rounded-xl" />
+            <div class="bg-gray-100 rounded-xl">
+              <img src="{% static './images/nikkimarcelo.jpg' %}" class="rounded-xl img" />
               <p class="text-xl font-bold mx-6">Marcelo, Nikki</p>
               <p class="text-xl font-bold mx-6">nikkimarcelo71@gmail.com</p>
               <p class="text-xl font-bold mx-6 pb-4">Researcher, Designer</p>
             </div>
-            <div class="bg-gray-100 rounded-xl shadow-md">
-              <img class="img" src="{% static './images/jhonacarag.jpg' %}" width={370} height={340} class="rounded-xl" />
+            <div class="bg-gray-100 rounded-xl">
+              <img src="{% static './images/jhonacarag.jpg' %}" class="rounded-xl img" />
               <p class="text-xl font-bold mx-6">Carag, Jhona May</p>
               <p class="text-xl font-bold mx-6">jhonamay271@gmail.com</p>
               <p class="text-xl font-bold mx-6 pb-4">Researcher, Documents</p>
@@ -46,4 +49,8 @@
         </div>
       </div>
     </div>
+    {% if user.is_authenticated %}
+    {% else %}
+        {% include './components/Footer.html' %}
+    {% endif %}
 {% endblock content %}

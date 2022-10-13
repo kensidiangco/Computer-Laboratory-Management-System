@@ -5,7 +5,7 @@
 {% block content %}
     <div class="px-4">
         <p class="text-2xl py-4 font-bold">Notifications</p>
-        <div class="flex">
+        <div class="flex py-4">
             <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
         </div>
         <div class="flex justify-center items-center">
@@ -13,8 +13,8 @@
                 <div class="bg-white shadow-xl rounded-md">
                     <form class="flex flex-start gap-2 p-1" method="POST">
                         {% csrf_token %}
-                        <input name="All" type="submit" value="All"  class="hover:bg-gray-100 rounded-xl p-2 text-sm font-bold cursor-pointer " />
-                        <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-100 rounded-xl p-2 text-sm font-bold cursor-pointer " />
+                        <input name="All" type="submit" value="All"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                        <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
                     </form>
 
                     <div class="p-2">
