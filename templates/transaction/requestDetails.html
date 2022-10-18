@@ -3,10 +3,12 @@
 {% block content %}
 <div class="pb-8 mx-10">
     <p class="text-2xl py-4 font-bold">Details</p>
-    <div class="flex">
-        <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
-    </div>
-    <div class="flex justify-between items-center py-4">
+    <div class="flex justify-between items-center py-4 pb-8">
+
+        <div class="flex">
+            <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
+        </div>
+
         {% if requestDetails.status == "Pending" and 'dean' in group %}
             <div class="float-right flex gap-4">
                 <form method="POST">
@@ -19,6 +21,7 @@
                 </form>
             </div>
         {% endif %}
+
         {% if requestDetails.requester == request.user and requestDetails.status == 'Approved'  %}
             <div class="">
                 <form method="POST">
@@ -27,6 +30,7 @@
                 </form>
             </div>
         {% endif %}
+        
         {% if requestDetails.requester == request.user and requestDetails.status == 'On Going'  %}
             <div class="">
                 <form method="POST">
@@ -75,44 +79,50 @@
         </div>
         
     </div>
-    <div class="flex flex-wrap mx-28 gap-6 justify-center my-6">
-        {% comment %} <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
-            <p class="text-sm text-gray-900">Time In Request</p>
-            <p class="text-xl">{{ requestDetails.time_in }}</p>
+    
+    <div class="my-6">
+        <p class="text-2xl font-bold py-1 px-4">Class Students</p>
+        <div class="flex flex-wrap mx-28 gap-6 justify-center">
+            {% comment %} <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
+                <p class="text-sm text-gray-900">Time In Request</p>
+                <p class="text-xl">{{ requestDetails.time_in }}</p>
+            </div>
+            <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
+                <p class="text-sm text-gray-900">Time Out Request</p>
+                <p class="text-xl">{{ requestDetails.time_out }}</p>
+            </div> {% endcomment %}
+            
+            {% if time_usage.time_in == null %}
+            {% else %}
+                <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
+                    <p class="text-sm text-gray-900">In</p>
+                    <p class="text-xl">{{time_usage.date_created}}</p>
+                </div>
+            {% endif %}
+    
+            {% if time_usage.time_out == null %}
+            {% else %}
+                <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
+                    <p class="text-sm text-gray-900">Out</p>
+                    <p class="text-xl">
+                        {{time_usage.date_updated}}
+                    </p>
+                </div>
+                <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
+                    <p class="text-sm text-gray-900">Time used</p>
+                    {% if hour == 0 %}
+                        <p class="text-xl">{{ min }} minutes, {{ sec }} secs</p>
+                    {% elif min > 59 %}
+                        <p class="text-xl">{{ hour }} Hours</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% comment %} <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
+                <a href={{requestDetails.class_list.url}}class="text-xl text-blue-600">{{ requestDetails.class_list }}</a>
+            </div> {% endcomment %}
         </div>
-        <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
-            <p class="text-sm text-gray-900">Time Out Request</p>
-            <p class="text-xl">{{ requestDetails.time_out }}</p>
-        </div> {% endcomment %}
-        {% if time_usage.time_in == null %}
-        {% else %}
-            <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
-                <p class="text-sm text-gray-900">In</p>
-                <p class="text-xl">{{time_usage.date_created}}</p>
-            </div>
-        {% endif %}
-
-        {% if time_usage.time_out == null %}
-        {% else %}
-            <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
-                <p class="text-sm text-gray-900">Out</p>
-                <p class="text-xl">
-                    {{time_usage.date_updated}}
-                </p>
-            </div>
-            <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
-                <p class="text-sm text-gray-900">Time used</p>
-                {% if hour == 0 %}
-                    <p class="text-xl">{{ min }} minutes, {{ sec }} secs</p>
-                {% elif min > 59 %}
-                    <p class="text-xl">{{ hour }} Hours</p>
-                {% endif %}
-            </div>
-        {% endif %}
-        {% comment %} <div class="p-4 bg-white rounded-md shadow-md border-0 border-l-8 border-purple-600">
-            <a href={{requestDetails.class_list.url}}class="text-xl text-blue-600">{{ requestDetails.class_list }}</a>
-        </div> {% endcomment %}
     </div>
+
     <div class="flex justify-center items-center">
         <div class="bg-white rounded-md shadow-md">
             <table class="border-separate rounded-md shadow-md">
