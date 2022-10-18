@@ -74,9 +74,9 @@ def requestForm(request):
             email_template_name = "transaction/notification/email/email_notification_template.txt"
             c = {
                 "email":"kensidiangco@gmail.com",
-                'domain':'127.0.0.1:8000',
-                'site_name': 'Website',
-                'protocol': 'http',
+                'domain':'clms-sjc.herokuapp.com',
+                'site_name': 'CLMS',
+                'protocol': 'https',
                 'sched_date_req': sched.date_request,
                 'sched': sched.pk
             }
@@ -622,9 +622,9 @@ def request_account(request):
             email_template_name = "account/email/account_request_template.txt"
             c = {
                 "email":"kensidiangco@gmail.com",
-                'domain':'127.0.0.1:8000',
-                'site_name': 'Website',
-                'protocol': 'http',
+                'domain':'clms-sjc.herokuapp.com',
+                'site_name': 'CLMS',
+                'protocol': 'https',
                 'email' : email_request
             }
             email = render_to_string(email_template_name, c)
