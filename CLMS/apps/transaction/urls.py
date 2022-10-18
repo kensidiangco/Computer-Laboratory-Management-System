@@ -23,7 +23,7 @@ urlpatterns = [
     path('api/notifs/', views.getNotifs, name="getNotifs"),
     path('clear-notification/', views.clearNotification, name="clearNotification"),
 
-    path('data/export', views.exportData, name="exportData"),
+    path('data/CLMS-report/', views.exportData, name="exportData"),
     path('data/pdf/', views.ViewPDF.as_view(), name="ViewPDF"),
 
     path('account/request', views.request_account, name="request_account"),
