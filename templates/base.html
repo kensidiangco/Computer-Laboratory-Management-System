@@ -105,7 +105,7 @@
                                     if(d.fields.read){
                                         _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-600 hover:bg-gray-100 transition transition-delay-1 cursor-pointer"><span class="font-normal"><span class="font-bold">' + d.fields.notif_for + '</span>: <span class="text-sm">' + d.fields.description +'</span></span><span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span></a>';
                                     }else {
-                                        _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-gray-600 hover:bg-gray-100 transition transition-delay-1 cursor-pointer bg-purple-100 hover:bg-purple-200"><span class="font-normal"><span class="font-bold">' + d.fields.notif_for + '</span>: <span class="text-sm">' + d.fields.description +'</span></span><span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span></a>';
+                                        _html+='<a href="/schedule/request/'+ d.fields.sched_url +'" class="flex flex-col p-2 text-black hover:bg-purple-100 transition transition-delay-1 cursor-pointer"><span class="font-normal"><span class="font-bold">' + d.fields.notif_for + '</span>: <span class="text-sm">' + d.fields.description +'</span></span><span class="text-sm text-gray-400">'+ get_date(d.fields.date_created) +'<span class="float-right bg-blue-600 p-1.5 rounded-xl"></span><span></a>';
                                     }
                                     
                                 });
