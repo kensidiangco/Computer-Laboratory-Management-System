@@ -5,7 +5,7 @@ from django.conf import settings
 class Computer_Lab(models.Model):
     room = models.CharField(_("room"), max_length=50, unique=True)
     floor = models.CharField(_("floor"), max_length=50)
-    status = models.CharField(_("status"), max_length=50, blank=True, null=True)
+    status = models.CharField(_("status"), max_length=50, blank=True, null=True, default="Available")
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 

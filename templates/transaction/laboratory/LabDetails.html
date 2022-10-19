@@ -29,11 +29,9 @@
             {% else %}
                 <p class="text-xl text-green-700">{{lab.status}}</p>
             {% endif %}            
-
         </div>
 
     </div>
-    {% if schedCount < 1 %}
     <div>
         <p class="text-xl py-4 font-bold">Not Available Date:</p>
 
@@ -51,7 +49,7 @@
                         <th class="p-2 rounded-md">STATUS</th>
                         <th class="p-2 rounded-md">INFO</th>
                     </tr>
-                    {% if schedCount < 1 %}
+                    {% if labsCount < 1 %}
                         <tr>
                             <td colspan="10" class="text-center p-4 text-gray-600 text-sm">No data to show.</td>
                         </tr>
@@ -92,7 +90,6 @@
         </div>
         
     </div>
-    {% endif %}
 </div>
     {% comment %} <a href="{% url 'logout' %}">Logout</a> 
     
