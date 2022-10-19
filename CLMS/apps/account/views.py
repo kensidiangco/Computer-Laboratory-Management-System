@@ -68,7 +68,7 @@ def profRegisterPage(request):
             user.groups.add(group)
             
             messages.success(request, 'Account successfully created for ' + username)
-            return HttpResponseRedirect(reverse('loginPage'))
+            return HttpResponseRedirect(reverse('profRegisterPage'))
             
         else:
             messages.error(request, form.errors)
@@ -90,7 +90,7 @@ def deanRegisterPage(request):
             user.groups.add(group)
             
             messages.success(request, 'Account successfully created for ' + username)
-            return HttpResponseRedirect(reverse('loginPage'))
+            return HttpResponseRedirect(reverse('deanRegisterPage'))
             
         else:
             messages.error(request, form.errors)
@@ -112,7 +112,7 @@ def ITDeptAccountRegister(request):
             user.groups.add(group)
             
             messages.success(request, 'Account successfully created for ' + username)
-            return HttpResponseRedirect(reverse('loginPage'))
+            return HttpResponseRedirect(reverse('ITDeptAccountRegister'))
             
         else:
             messages.error(request, form.errors)

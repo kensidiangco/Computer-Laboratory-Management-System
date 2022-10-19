@@ -44,27 +44,7 @@
 
     
     <div class="flex flex-wrap gap-4 justify-center">
-        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
-            <p class="text-sm text-gray-900">Date requested</p>
-            <p class="text-xl">{{ requestDetails.date_created }}</p>
-        </div>
 
-        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
-            <p class="text-sm text-gray-900">Requested by</p>
-            <p class="text-xl">{{ requestDetails.requester }}</p>
-        </div>
-
-        {% comment %} <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
-            <p class="text-sm text-gray-900">Request Date</p>
-            <p class="text-xl">{{ requestDetails.date_request }}</p>
-        </div> {% endcomment %}
-
-        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
-            <p class="text-sm text-gray-900">Date and Time In&Out Request</p>
-            <p class="text-xl">{{ requestDetails.date_request }}</p>
-            <p class="text-xl">{{ requestDetails.time_in }} - {{ requestDetails.time_out }}</p>
-        </div>
-        
         <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
             <p class="text-sm text-gray-900">STATUS</p>
             {% if requestDetails.status == 'Approved' %}
@@ -77,7 +57,34 @@
                 <p class="text-xl text-blue-600">{{ requestDetails.status|upper }}</p>
             {% endif %}
         </div>
-        
+
+        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
+            <p class="text-sm text-gray-900">When</p>
+            <p class="text-xl">{{ requestDetails.date_request }}, {{ requestDetails.time_in }} - {{ requestDetails.time_out }}</p>
+        </div>
+
+        {% if requestDetails.comlab_room %}
+            <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
+                <p class="text-sm text-gray-900">Where</p>
+                <a href="{% url 'LabDetails' pk=requestDetails.comlab_room.pk %}" class="text-xl">{{ requestDetails.comlab_room }}</a>
+            </div>
+        {% endif %}
+
+        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
+            <p class="text-sm text-gray-900">Requested by</p>
+            <p class="text-xl">{{ requestDetails.requester }}</p>
+        </div>
+
+        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
+            <p class="text-sm text-gray-900">Yr & Section</p>
+            <p class="text-xl">{{ requestDetails.year_level }}yr & sec.{{ requestDetails.section }}</p>
+        </div>
+
+        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
+            <p class="text-sm text-gray-900">Date requested</p>
+            <p class="text-xl">{{ requestDetails.date_created }}</p>
+        </div>
+
     </div>
     
     {% if time_usage.time_in == null %}
@@ -85,15 +92,6 @@
     <div class="my-6">
         <p class="text-2xl font-bold py-2 px-4">Time Usage Details</p>
         <div class="flex flex-wrap mx-28 gap-6 justify-center">
-            {% comment %} <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
-                <p class="text-sm text-gray-900">Time In Request</p>
-                <p class="text-xl">{{ requestDetails.time_in }}</p>
-            </div>
-            <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
-                <p class="text-sm text-gray-900">Time Out Request</p>
-                <p class="text-xl">{{ requestDetails.time_out }}</p>
-            </div> {% endcomment %}
-            
             {% if time_usage.time_in == null %}
             {% else %}
                 <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">

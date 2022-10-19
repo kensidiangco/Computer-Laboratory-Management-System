@@ -24,6 +24,7 @@
                     {% if 'admin' in user_group %}
                         <p class="text-gray-400 m-3 mt-4 uppercase">FORMS</p>
                         <a href="{% url 'formPage' %}" class="{% if url_name == 'formPage' or url_name == 'ITDeptAccountRegister' or url_name == 'profRegisterPage' or url_name == 'deanRegisterPage' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">Registration</a>
+                        <a href="{% url 'LaboratoryCreateView' %}" class="{% if url_name == 'LaboratoryCreateView' %}bg-purple-200{% endif %} flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 hover:bg-purple-100 transition transition-delay-1">New Laboratory</a>
                     {% endif %}
                     {% if 'prof' in user_group %}
                         <p class="text-gray-400 m-3 mt-4 uppercase">FORMS</p>

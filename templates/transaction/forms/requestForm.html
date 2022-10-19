@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Request form{% endblock title %}
+
+{% block content %}
+<div class="py-4 mx-10">
+    <p class="text-2xl font-bold">Request a new schedule</p>
+    <div class="flex justify-center items-center py-8">
+        <div class="p-4 bg-white rounded-md shadow-xl">
+            {% for message in messages %}
+                <p class=" text-blue-600 py-2 text-center">{{ message }}</p>
+            {% endfor %}
+            <div class="flex px-2 items-center justify-between">
+                <h1 class="text-xl"></h1>
+                <a href="{% url 'studentListExport' %}" class="float-right text-blue-600">Export students list in excel</a>
+            </div>
+            <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-2" >
+                {% csrf_token %}
+                <label class="text-gray-900">Import student list data</label>
+                <span class="pb-2">
+                    <input type="file" name="files" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required />
+                </span>
+
+                <p class="text-slate-900">Class details:</p>
+                <span class="flex gap-4">
+                    {{ schedForm.course }}
+                    {{ schedForm.year_level }}
+                    {{ schedForm.section }}
+                </span>
+
+                <span class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class=" text-gray-900 py-2">When:</p>
+                        {{ schedForm.date_request }}
+                    </div>
+                    
+                    <div>
+                        <p class=" text-gray-900 py-2">Where:</p>
+                        {{ schedForm.comlab_room }}
+                    </div>
+                </span>
+
+                <span class="grid grid-cols-2 gap-4">
+                    <div class="">
+                        <p class=" text-gray-900 py-2">Time in:</p>
+                        {{ schedForm.time_in }}
+                    </div>
+                    
+                    <div>
+                        <p class=" text-gray-900 py-2">Time out:</p>
+                        {{ schedForm.time_out }}
+                    </div>
+                </span>
+
+                <input type="submit" class="bg-purple-600 text-white rounded-md p-2 mt-4 hover:bg-purple-500 cursor-pointer" value="Submit Request">
+            </form>
+            {% comment %} <div class="flex flex-col gap-2 p-2 text-center text-blue-600">
+                <p class="">Doesn't have an account?</p>
+                <a href="{% url 'registerPage' %}" class=" bg-gray-200 text-gray-600 rounded-md p-2 hover:bg-gray-400 hover:text-white transition transition-delay-2 cursor-pointer">Create staff account.</a>
+                <a href="{% url 'ITDeptAccountRegister' %}" class=" bg-gray-200 text-gray-600 rounded-md p-2 hover:bg-gray-400 hover:text-white transition transition-delay-2 cursor-pointer">Create IT Dept account.</a>
+            </div> {% endcomment %}
+        </div>        
+    </div>
+</div>
+{% endblock content %}

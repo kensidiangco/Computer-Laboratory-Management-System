@@ -2,8 +2,19 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.conf import settings
 
+class Computer_Lab(models.Model):
+    room = models.CharField(_("room"), max_length=50, unique=True)
+    floor = models.CharField(_("floor"), max_length=50)
+    status = models.CharField(_("status"), max_length=50, blank=True, null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.room
+
 class Sched_Request(models.Model):
     requester = models.ForeignKey(settings.AUTH_USER_MODEL , on_delete=models.CASCADE, related_name="requester")
+    comlab_room = models.ForeignKey(Computer_Lab , on_delete=models.CASCADE, related_name="comlab_room", blank=True, null=True)
     course = models.CharField(_("course"), max_length=50)
     year_level = models.CharField(_("year_level"), max_length=50)
     section = models.CharField(_("section"), max_length=50)

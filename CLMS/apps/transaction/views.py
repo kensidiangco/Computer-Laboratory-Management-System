@@ -10,9 +10,9 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from ...decorators import admin_pending_sched_view_only, admin_approved_sched_view_only, admin_rejected_sched_view_only, admin_done_sched_view_only, admin_ongoing_sched_view_only
 from CLMS.apps.account.models import Notification
-from .models import Approved_Schedule, Rejected_Schedule, Student, Sched_Request, Sched_Time_Usage
+from .models import Approved_Schedule, Computer_Lab, Rejected_Schedule, Student, Sched_Request, Sched_Time_Usage
 from django.http import JsonResponse 
-from .forms import ScheduleRequestForm, StudentForm
+from .forms import LaboratoryCreateForm, ScheduleRequestForm, StudentForm
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -118,7 +118,7 @@ def requestForm(request):
 
     schedForm = ScheduleRequestForm()
     studentForm = StudentForm()
-    return render(request, './transaction/requestForm.html', {
+    return render(request, './transaction/forms/requestForm.html', {
         'schedForm': schedForm,
         'studentForm': studentForm,
     })
@@ -224,6 +224,10 @@ def requestDetails(request, pk):
 
             requestDetails.status="On Going"
             requestDetails.save()
+
+            comlab = Computer_Lab.objects.filter(pk=requestDetails.comlab_room.pk)
+            comlab.update(status="Not Available")
+
             # Sched_Time_Usage.objects.create(
             #     sched = approvedId.first()
             # )
@@ -255,6 +259,9 @@ def requestDetails(request, pk):
 
             requestDetails.status="Done"
             requestDetails.save()
+
+            comlab = Computer_Lab.objects.filter(pk=requestDetails.comlab_room.pk)
+            comlab.update(status="Available")
 
             Notification.objects.create(
                 receiver=User.objects.get(username='itdept'),
@@ -289,8 +296,6 @@ def requestDetails(request, pk):
         
         if time_list[0] > 60:
             h += int(time_list[0] / 60)
-
-        print(h,":",m,":",s)
 
         context = {
             'requestDetails': requestDetails,
@@ -636,3 +641,50 @@ def request_account(request):
                 return HttpResponse('Invalid header found.')
 
     return render(request, './transaction/request_account.html')
+
+def LaboratoryCreateView(request):
+    LabForm = LaboratoryCreateForm()
+    labs = Computer_Lab.objects.all()
+
+    paginator = Paginator(labs, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    labsCount = len(labs)
+
+    if request.method == 'POST':
+        form = LaboratoryCreateForm(request.POST)
+        if form.is_valid():
+            comlab = form.save(commit=False)
+            comlab.save()
+            messages.success(request, "Laboratory room %s successfully added!" % comlab.room)
+        else:
+            messages.error(request, "Check if the lab you are tried to add is already in the system.")
+
+    context= {
+        'LabForm': LabForm,
+        'page_obj': page_obj,
+        'labsCount': labsCount,
+        'date_today': datetime.today().strftime('%B %d, %Y %H:%M:%p'),
+    }
+    return render(request, 'transaction/forms/LaboratoryCreatePage.html', context)
+
+def LabDetails(request, pk):
+    lab = get_object_or_404(Computer_Lab, pk=pk)
+    pending_sched = Sched_Request.objects.filter(comlab_room=lab, status="Pending")
+    approved_sched = Sched_Request.objects.filter(comlab_room=lab, status="Approved")
+
+    paginator = Paginator(approved_sched, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    labsCount = len(approved_sched)
+
+    ctx = {
+        'lab': lab,
+        'pending_sched': pending_sched,
+        'approved_sched': approved_sched,
+        'page_obj': page_obj,
+        'labsCount': labsCount,
+        'date_today': datetime.today().strftime('%B %d, %Y %H:%M:%p'),
+    }
+    
+    return render(request, 'transaction/laboratory/LabDetails.html', ctx)

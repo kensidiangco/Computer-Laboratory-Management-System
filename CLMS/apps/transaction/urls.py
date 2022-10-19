@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.transactionIndexPage, name="transactionIndexPage"),
 
     path('request/form/', views.requestForm, name="requestForm"),
+    path('new/lab/', views.LaboratoryCreateView, name="LaboratoryCreateView"),
     path('request/<int:pk>/', views.requestDetails, name="requestDetails"),
     path('requests/', views.requestList, name="requestList"),
     path('ongoing/', views.onGoingSchedule, name="onGoingSchedule"),
@@ -27,4 +28,6 @@ urlpatterns = [
     path('data/pdf/', views.ViewPDF.as_view(), name="ViewPDF"),
 
     path('account/request', views.request_account, name="request_account"),
+
+    path('lab/<int:pk>/', views.LabDetails, name="LabDetails"),
 ]
