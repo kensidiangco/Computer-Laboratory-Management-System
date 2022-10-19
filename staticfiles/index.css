@@ -1,0 +1,5 @@
+#bgImage {
+    background: url("./images/index-vector.png") no-repeat 
+    center center; 
+    background-size: 70%;
+}

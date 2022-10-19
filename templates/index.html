@@ -47,18 +47,17 @@
         </div> {% endcomment %}
         {% include './components/unauthenticatedNavigation.html' %}
         <div class="flex flex-col xl:flex-row justify-center items-center gap-4 py-8 xl:py-0">
-            <div class="">
-                <p class="py-1 text-5xl text-purple-700 subpixel-antialiased">Computer Laboratory</p>
-                <p class="py-1 text-5xl text-purple-700 subpixel-antialiased">Management System</p>
-                <p class="py-1 text-3xl text-purple-600 antialiased">Makes our lives easier</p>
+            <div class="px-4 xl:w-5/12 xl:p-8 xl:mt-12 text-center xl:text-left">
+                <p class="py-1 text-5xl text-purple-700 font-bold subpixel-antialiased">Computer Laboratories Scheduling System of Phinma Saint Jude College Manila</p>
+                <p class="py-1 text-2xl text-purple-600 antialiased">Schedule a sacred date with yourself. You deserve time for your life.</p>
                 {% comment %} <button onclick="window.location.href='/about'" class="mt-2 bg-purple-600 hover:bg-purple-500 text-white transition-all rounded-xl p-3 shadow-xl">Contact Us</button> {% endcomment %}
                 <div class="flex gap-4 items-center justify-center py-6">
-                    <a href="https://web.facebook.com/KKENN21" target="_blank"><img src="{% static './images/fb.png' %}" class="w-6"/></a>
-                    <a href="https://www.instagram.com/kensidiangco/" target="_blank"><img src="{% static './images/ig.png' %}" class="w-11"/></a>
-                    <a href="https://github.com/kensidiangco" target="_blank"><img src="{% static './images/gh.png' %}" class="w-6"/></a>
+                    <a href="https://web.facebook.com/KKENN21" target="_blank"><img src="{% static 'images/fb.png' %}" class="w-6"/></a>
+                    <a href="https://www.instagram.com/kensidiangco/" target="_blank"><img src="{% static 'images/ig.png' %}" class="w-11"/></a>
+                    <a href="https://github.com/kensidiangco" target="_blank"><img src="{% static 'images/gh.png' %}" class="w-6"/></a>
                 </div>
             </div>
-            <img src="{% static "./images/index-vector.svg" %}" class="w-96 xl:w-2/5 p-8 drop-shadow-2xl">
+            <img src="{% static "images/index-vector.svg" %}" class="hidden xl:block w-96 xl:w-2/5 p-8 drop-shadow-2xl">
         </div>
         {% comment %} <div class="z-50 h-screen" id="bgImage">
         </div> {% endcomment %}
