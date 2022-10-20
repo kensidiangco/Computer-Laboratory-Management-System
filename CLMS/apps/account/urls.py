@@ -11,7 +11,6 @@ urlpatterns = [
     path('ITDept/dashboard/', views.ITDeptDashboard, name="ITDeptDashboard"),
     path('dean/dashboard/', views.deanDashboard, name="deanDashboard"),
     path('profile/', views.profile, name="profile"),
-    path('theme', views.theme, name="theme"),
     
     path("password_reset", views.password_reset_request, name="password_reset"),
 

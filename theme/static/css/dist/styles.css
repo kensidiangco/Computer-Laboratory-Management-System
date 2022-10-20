@@ -846,9 +846,19 @@ select {
   margin-right: 7rem;
 }
 
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+.mx-12 {
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+.mx-14 {
+  margin-left: 3.5rem;
+  margin-right: 3.5rem;
+}
+
+.mx-16 {
+  margin-left: 4rem;
+  margin-right: 4rem;
 }
 
 .mt-2 {
@@ -959,10 +969,6 @@ select {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .flex-row {
   flex-direction: row;
 }
@@ -995,10 +1001,6 @@ select {
   justify-content: space-between;
 }
 
-.justify-around {
-  justify-content: space-around;
-}
-
 .gap-4 {
   gap: 1rem;
 }
@@ -1025,10 +1027,6 @@ select {
 
 .gap-1 {
   gap: 0.25rem;
-}
-
-.gap-12 {
-  gap: 3rem;
 }
 
 .overflow-auto {
@@ -1315,11 +1313,6 @@ select {
   padding-right: 0.25rem;
 }
 
-.py-5 {
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
-}
-
 .pb-4 {
   padding-bottom: 1rem;
 }
@@ -1460,9 +1453,14 @@ select {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.text-yellow-600 {
+.text-red-600 {
   --tw-text-opacity: 1;
-  color: rgb(202 138 4 / var(--tw-text-opacity));
+  color: rgb(220 38 38 / var(--tw-text-opacity));
+}
+
+.text-green-600 {
+  --tw-text-opacity: 1;
+  color: rgb(22 163 74 / var(--tw-text-opacity));
 }
 
 .text-slate-900 {
@@ -1480,11 +1478,6 @@ select {
   color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
-.text-red-600 {
-  --tw-text-opacity: 1;
-  color: rgb(220 38 38 / var(--tw-text-opacity));
-}
-
 .text-gray-900 {
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
@@ -1495,19 +1488,9 @@ select {
   color: rgb(37 99 235 / var(--tw-text-opacity));
 }
 
-.text-purple-900 {
+.text-yellow-600 {
   --tw-text-opacity: 1;
-  color: rgb(88 28 135 / var(--tw-text-opacity));
-}
-
-.text-yellow-700 {
-  --tw-text-opacity: 1;
-  color: rgb(161 98 7 / var(--tw-text-opacity));
-}
-
-.text-green-600 {
-  --tw-text-opacity: 1;
-  color: rgb(22 163 74 / var(--tw-text-opacity));
+  color: rgb(202 138 4 / var(--tw-text-opacity));
 }
 
 .text-green-700 {
@@ -1518,6 +1501,16 @@ select {
 .text-red-700 {
   --tw-text-opacity: 1;
   color: rgb(185 28 28 / var(--tw-text-opacity));
+}
+
+.text-gray-800 {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity));
+}
+
+.text-gray-700 {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 
 .antialiased {
@@ -1741,11 +1734,6 @@ select {
   .xl\:py-0 {
     padding-top: 0px;
     padding-bottom: 0px;
-  }
-
-  .xl\:py-4 {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
   }
 
   .xl\:text-left {

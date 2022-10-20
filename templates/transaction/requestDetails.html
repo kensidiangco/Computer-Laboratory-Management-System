@@ -43,7 +43,7 @@
 
 
     
-    <div class="flex flex-wrap gap-4 justify-center">
+    <div class="flex flex-wrap gap-4 justify-center mx-16">
 
         <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
             <p class="text-sm text-gray-900">STATUS</p>
@@ -59,6 +59,11 @@
         </div>
 
         <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
+            <p class="text-sm text-gray-900">Requested by</p>
+            <p class="text-xl">{{ requestDetails.requester }}</p>
+        </div>
+
+        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
             <p class="text-sm text-gray-900">When</p>
             <p class="text-xl">{{ requestDetails.date_request }}, {{ requestDetails.time_in }} - {{ requestDetails.time_out }}</p>
         </div>
@@ -71,13 +76,8 @@
         {% endif %}
 
         <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
-            <p class="text-sm text-gray-900">Requested by</p>
-            <p class="text-xl">{{ requestDetails.requester }}</p>
-        </div>
-
-        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
             <p class="text-sm text-gray-900">Yr & Section</p>
-            <p class="text-xl">{{ requestDetails.year_level }}yr & sec.{{ requestDetails.section }}</p>
+            <p class="text-xl">{{ requestDetails.year_level }} - {{ requestDetails.section }}</p>
         </div>
 
         <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
@@ -90,8 +90,8 @@
     {% if time_usage.time_in == null %}
     {% else %}
     <div class="my-6">
-        <p class="text-2xl font-bold py-2 px-4">Time Usage Details</p>
-        <div class="flex flex-wrap mx-28 gap-6 justify-center">
+        <p class="text-2xl font-bold py-2 px-4 text-gray-900">Time Usage</p>
+        <div class="flex flex-wrap gap-4 mx-12 justify-center">
             {% if time_usage.time_in == null %}
             {% else %}
                 <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
@@ -123,9 +123,9 @@
         </div>
     </div>
     {% endif %}
-
+    {% if students.count > 0 %}
     <div class="my-6">
-        <p class="text-2xl font-bold py-2 px-4">Student List</p>
+        <p class="text-2xl font-bold py-2 px-4 text-gray-900">Student List</p>
         <div class="flex justify-center items-center">
             <div class="bg-white rounded-md shadow-xl">
                 <table class="border-separate rounded-md shadow-xl">
@@ -137,6 +137,11 @@
                         <th class="p-2 rounded-md">CONTACT</th>
                         <th class="p-2 rounded-md">ADDRESS</th>
                     </tr>
+                    {% if students.count < 1 %}
+                        <tr>
+                            <td colspan="10" class="text-sm">No students.</td>
+                        </tr>
+                    {% endif %}
                     {% for sched in page_obj %}
                     <tr class="hover:bg-gray-200 transition transition-delay-1">
                         <td class="p-2">{{ sched.student_no }}</td>
@@ -165,5 +170,6 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock  %}

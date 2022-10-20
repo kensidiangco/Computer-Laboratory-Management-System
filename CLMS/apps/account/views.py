@@ -9,7 +9,7 @@ from django.contrib import messages
 from ...decorators import dean_only, unauthenticated_user, admin_only, ITDept_only, prof_only
 from django.contrib.auth.models import Group
 from .models import Notification, Theme, Profile
-from ..transaction.models import Sched_Request
+from ..transaction.models import Computer_Lab, Sched_Request
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.contrib.auth.forms import PasswordResetForm
@@ -142,43 +142,7 @@ def profile(request):
     
 @unauthenticated_user
 def index(request):
-
-    if Theme.objects.filter(user=request.user.username).exists():
-        color = Theme.objects.get(user=request.user.username).color
-    else:
-        color = 'light'
-        
-    context = {
-        'color': color
-    }
-
-    return render(request, './index.html', context)
-
-@login_required(login_url=reverse_lazy("loginPage"))
-def theme(request):
-    color = request.GET.get('color')
-
-    if color == 'dark':
-        if Theme.objects.filter(user=request.user.username).exists():
-            user_theme = Theme.objects.get(user=request.user.username)
-            user_theme.user = request.user.username
-            user_theme.color = 'dark'
-            user_theme.save()
-        else:
-            user2 = Theme(user=request.user.username, color='dark')
-            user2.save()
-
-    elif color == 'light':
-        if Theme.objects.filter(user=request.user.username).exists():
-            user_theme = Theme.objects.get(user=request.user.username)
-            user_theme.user = request.user.username
-            user_theme.color = 'light'
-            user_theme.save()
-        else:
-            user2 = Theme(user=request.user.username, color='light')
-            user2.save()
-
-    return HttpResponseRedirect(reverse('adminDashboard'))
+    return render(request, './index.html')
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def formPage(request):
@@ -199,21 +163,27 @@ def adminDashboard(request):
     done = Sched_Request.objects.filter(status="Done")
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
-    scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
-    paginator = Paginator(scheds, 5)
 
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('-date_created')
+    
+    recent_request = []
+    for sched in scheds:
+        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
+        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
+            recent_request.append(sched)
+
+    paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(scheds)
+    schedCount = len(recent_request)
 
-    if Theme.objects.filter(user=request.user.username).exists():
-        color = Theme.objects.get(user=request.user.username).color
-    else:
-        color = 'light'
+    availableLabs = Computer_Lab.objects.filter(status="Available") 
+    notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
         
     context = {
-        'color': color,
+        'availableLabs': availableLabs,
+        'notAvailableLabs': notAvailableLabs,
         'pending': pending,
         'approved': approved,
         'rejected': rejected,
@@ -236,21 +206,27 @@ def deanDashboard(request):
     done = Sched_Request.objects.filter(status="Done")
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
-    scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
-    paginator = Paginator(scheds, 5)
 
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('-date_created')
+    
+    recent_request = []
+    for sched in scheds:
+        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
+        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
+            recent_request.append(sched)
+
+    paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(scheds)
+    schedCount = len(recent_request)
 
-    if Theme.objects.filter(user=request.user.username).exists():
-        color = Theme.objects.get(user=request.user.username).color
-    else:
-        color = 'light'
+    availableLabs = Computer_Lab.objects.filter(status="Available") 
+    notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
         
     context = {
-        'color': color,
+        'availableLabs': availableLabs,
+        'notAvailableLabs': notAvailableLabs,
         'pending': pending,
         'approved': approved,
         'rejected': rejected,
@@ -259,7 +235,7 @@ def deanDashboard(request):
         'date_today': date_today,
         'scheds': scheds,
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
     }
     return render(request, './account/dean/deanDashboard.html', context)
 
@@ -271,23 +247,29 @@ def ITDeptDashboard(request):
     rejected = Sched_Request.objects.filter(status="Rejected")
     onGoing = Sched_Request.objects.filter(status="On going")
     done = Sched_Request.objects.filter(status="Done")
-    
-    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
-    scheds = Sched_Request.objects.filter(status="Pending").order_by('date_created')
-    paginator = Paginator(scheds, 5)
 
+    date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
+
+    scheds = Sched_Request.objects.filter(status="Pending").order_by('-date_created')
+    
+    recent_request = []
+    for sched in scheds:
+        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
+        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
+            recent_request.append(sched)
+
+    paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(scheds)
+    schedCount = len(recent_request)
 
-    if Theme.objects.filter(user=request.user.username).exists():
-        color = Theme.objects.get(user=request.user.username).color
-    else:
-        color = 'light'
+    availableLabs = Computer_Lab.objects.filter(status="Available") 
+    notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
         
     context = {
-        'color': color,
+        'availableLabs': availableLabs,
+        'notAvailableLabs': notAvailableLabs,
         'pending': pending,
         'approved': approved,
         'rejected': rejected,
@@ -296,7 +278,7 @@ def ITDeptDashboard(request):
         'date_today': date_today,
         'scheds': scheds,
         'page_obj': page_obj,
-        'schedCount': schedCount
+        'schedCount': schedCount,
     }
     return render(request, './account/itdept/dashboard.html', context)
 
@@ -315,37 +297,28 @@ def profDashboard(request):
     doneSched = sched.filter(status="Done")
     approvedSched = sched.filter(status="Approved")
     rejectedSched = sched.filter(status="Rejected")
+    
+    availableLabs = Computer_Lab.objects.filter(status="Available") 
+    notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
 
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('date_created')
-    paginator = Paginator(scheds, 5)
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('-date_created')
+    
+    recent_request = []
+    for sched in scheds:
+        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
+        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
+            recent_request.append(sched)
 
+    paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(scheds)
+    schedCount = len(recent_request)
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
-    # pendingSchedPaginator = Paginator(pendingSched, 5)
-    # page_number = request.GET.get('page')
-    # pendingSchedPage_obj = pendingSchedPaginator.get_page(page_number)
-
-    # onGoingSchedPaginator = Paginator(onGoingSched, 5)
-    # page_number = request.GET.get('page')
-    # onGoingSchedPage_obj = onGoingSchedPaginator.get_page(page_number)
-
-    # doneSchedPaginator = Paginator(doneSched, 5)
-    # page_number = request.GET.get('page')
-    # doneSchedPage_obj = doneSchedPaginator.get_page(page_number)
-
-    # approvedSchedPaginator = Paginator(approvedSched, 5)
-    # page_number = request.GET.get('page')
-    # approvedSchedPage_obj = approvedSchedPaginator.get_page(page_number)
-
-    # rejectedSchedPaginator = Paginator(rejectedSched, 5)
-    # page_number = request.GET.get('page')
-    # rejectedSchedPage_obj = rejectedSchedPaginator.get_page(page_number)
-
     context = {
+        'availableLabs': availableLabs,
+        'notAvailableLabs': notAvailableLabs,
         'pendingSched': pendingSched,
         'onGoingSched': onGoingSched,
         'doneSched': doneSched,

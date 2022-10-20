@@ -298,6 +298,7 @@ def requestDetails(request, pk):
             h += int(time_list[0] / 60)
 
         context = {
+            'students': students,
             'requestDetails': requestDetails,
             'page_obj': page_obj, 
             'group': group,
@@ -310,6 +311,7 @@ def requestDetails(request, pk):
         return render(request, './transaction/requestDetails.html', context)
     except:
         context = {
+            'students': students,
             'requestDetails': requestDetails,
             'page_obj': page_obj, 
             'group': group,
@@ -688,3 +690,20 @@ def LabDetails(request, pk):
     }
     
     return render(request, 'transaction/laboratory/LabDetails.html', ctx)
+
+def laboratoriesListView(request):
+
+    available_lab = Computer_Lab.objects.filter(status="Available")
+    not_available = Computer_Lab.objects.filter(status="Not Available")
+
+    available_paginator = Paginator(available_lab, 5)
+    available_page_number = request.GET.get('page')
+    available_page_obj = available_paginator.get_page(available_page_number)
+    labsCount = len(available_lab)
+    
+    ctx = {
+        'available_page_obj': available_page_obj,
+        'labsCount': labsCount,
+        'date_today': datetime.today().strftime('%B %d, %Y %H:%M:%p'),
+    }
+    return render(request, './transaction/laboratory/laboratoriesListView.html', ctx)

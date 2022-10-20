@@ -10,6 +10,8 @@ urlpatterns = [
     path('new/lab/', views.LaboratoryCreateView, name="LaboratoryCreateView"),
     path('request/<int:pk>/', views.requestDetails, name="requestDetails"),
     path('requests/', views.requestList, name="requestList"),
+    path('laboratories/', views.laboratoriesListView, name="laboratoriesListView"),
+    
     path('ongoing/', views.onGoingSchedule, name="onGoingSchedule"),
     path('done/', views.doneSchedule, name="doneSchedule"),
     path('requests/approved/', views.approvedRequest, name="approvedRequest"),

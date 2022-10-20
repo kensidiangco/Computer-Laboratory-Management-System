@@ -17,6 +17,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'https://clms-sjc.herokuapp.com']
 
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
 # Application definition
 
@@ -136,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Singapore'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
@@ -163,4 +164,5 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesSto
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
 django_heroku.settings(locals())
