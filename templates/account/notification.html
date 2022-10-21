@@ -13,8 +13,13 @@
                 <div class="bg-white shadow-xl rounded-md">
                     <form class="flex flex-start gap-2 p-1" method="POST">
                         {% csrf_token %}
-                        <input name="All" type="submit" value="All"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
-                        <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                        {% if notif.read == True %}
+                            <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-50 bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                            <input name="All" type="submit" value="All"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                        {% else %}
+                            <input name="All" type="submit" value="All"  class="hover:bg-gray-50 bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                            <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                        {% endif %}
                     </form>
 
                     <div class="p-2">
