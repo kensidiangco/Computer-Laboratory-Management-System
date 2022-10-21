@@ -344,7 +344,8 @@ def notification_page(request):
             notifs_count = Notification.objects.filter(receiver=request.user).order_by('-date_created').count
             return render(request, './account/notification.html', {
                 'notifs': notifs,
-                'notifs_count': notifs_count
+                'notifs_count': notifs_count,
+                'status': 'All'
             })
 
 
@@ -353,7 +354,8 @@ def notification_page(request):
             notifs_count = Notification.objects.filter(receiver=request.user, read=False).order_by('-date_created').count
             return render(request, './account/notification.html', {
                 'notifs': notifs,
-                'notifs_count': notifs_count
+                'notifs_count': notifs_count,
+                'status': 'Unread'
             })
 
     else:
