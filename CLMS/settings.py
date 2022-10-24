@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'https://clms-sjc.herokuapp.com']
 
@@ -34,8 +34,19 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'django_browser_reload',
+
+    'webpush',
 ]
 
+# Web push configuration 
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": os.environ['VAPID_PUBLIC_KEY'],
+    "VAPID_PRIVATE_KEY": os.environ['VAPID_PRIVATE_KEY'],
+    "VAPID_ADMIN_EMAIL": os.environ['VAPID_ADMIN_EMAIL']
+}
+
+
+# SMTP Config
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'

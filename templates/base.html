@@ -2,7 +2,9 @@
 {% load tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en" class="bg-gradient-to-r from-pink-50 via-slate-100 to-purple-100 backdrop backdrop-blur-xl">
+    {% load webpush_notifications %}
     <head>
+        {% webpush_header %}
         <title>
             {% block title %}{% endblock title %}
         </title>
@@ -41,10 +43,10 @@
         </style>
     </head>
     <body>
-        
-        {% comment %} {% include './components/navbar.html' %}     {% endcomment %}
+        {% comment %} {% webpush_button with_class="p-2 bg-gray-100" %} {% endcomment %}
+
         {% if user.is_authenticated %}
-            <div id="navB" class="grid grid-cols-6 my-transition">
+            <div id="navB" class="grid grid-cols-1 md:grid-cols-6 my-transition">
                 {% include './components/sidebar.html' %}    
         {% endif %}
 
@@ -135,26 +137,67 @@
                             },
                             success:function(res) {
                                 _totalUnread = '';
+                                _totalUnread1 = '';
                                 _notifStatus='';
                                 _json = $.parseJSON(res.totalUnread);
 
                                 if(_json > 0) {
                                     _notifStatus='<button type="button" class="text-sm pb-1 text-blue-500 cursor-pointer float-right w-full mark-all-read">Mark all as read</button>'
-                                    _totalUnread += '<button id="notification" onClick="notifClicked()" class="flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button><button id="notification2" onClick="notifClicked2()" class="hidden flex items-center">Notification <span class="bg-red-600 rounded-xl px-2 text-sm total-unread">'+ _json +'</span></button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
+                                    _totalUnread += 'New ' + _json
+                                    _totalUnread1 += _json
                                 } else {
                                     _notifStatus='<p class="text-gray-600 text-sm text-center">No new updates.</p>'
-                                    _totalUnread += '<button id="notification" onClick="notifClicked()">Notification</button> <button id="notification2" onClick="notifClicked2()" class="hidden">Notification</button> <button id="profile" onClick="profileClicked()">Account</button> <button id="profile2" onClick="profileClicked2()" class="hidden">Account</button>'
                                 }
 
                                 $('.notif-status').html(_notifStatus);
                                 $('.total-unread').html(_totalUnread);
+                                $('.total-unread1').html(_totalUnread1);
                                 $(".ajaxRes").hide();
                             }
                         })
-                    }, 3000)
+                    }, 500)
                 });
                 
             </script>
+
+            <script>
+                $('.push_button').click(function() {
+                    $(document).ready(function() {
+                        $(".ajaxRes").hide();
+                        $.ajax({
+                            url: "{% url 'Web_Push_Notification' %}",
+                            dataType: 'json',
+                            beforeSend:function() {
+                                $(".ajaxRes").show();
+                                $(".ajaxRes").text();
+                            },
+                            success:function(res) {
+                                console.log(res)
+                            }
+                        })
+                    });
+                })
+            </script>
+
+            {% comment %} <script>
+                $(document).ready(function() {
+                    $(".ajaxRes").hide();
+                    setInterval(function() {
+                        $.ajax({
+                            url: "{% url 'Web_Push_Notification' %}",
+                            dataType: 'json',
+                            beforeSend:function() {
+                                $(".ajaxRes").show();
+                                $(".ajaxRes").text();
+                            },
+                            success:function(res) {
+                                console.log(res)
+                            }
+                        })
+                    }, 5000)
+                });
+            </script> {% endcomment %}
+
         {% endif %}
         <script>
             var openM = document.getElementById("openM")

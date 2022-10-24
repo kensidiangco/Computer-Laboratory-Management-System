@@ -10,12 +10,21 @@
     </div>
     <div class="flex flex-wrap justify-center gap-4 py-4">
 
+        <a href="{% url 'requestList' %}" class="p-4 bg-white rounded-xl shadow-xl boder-0 border-l-8 border-l-purple-600">
+            <p class="text-gray-900">Pending Schedule</p>
+            {% if pending.count < 1 %}
+                <p class="text-sm py-2">No data.</p>
+            {% else %}
+                <p class="text-xl font-bold">{{ pending.count }}</p>
+            {% endif %}
+        </a>
+
         <a href="{% url 'laboratoriesListView' %}" class="p-4 bg-white rounded-xl shadow-xl boder-0 border-l-8 border-l-purple-600">
             <p class="text-gray-900">Available Laboratories</p>
             {% if availableLabs.count < 1 %}
                 <p class="text-sm py-2">No labs are available.</p>
             {% else %}
-                <p class="text-xl">{{ availableLabs.count }}</p>
+                <p class="text-xl font-bold">{{ availableLabs.count }}</p>
             {% endif %}
         </a>
 
@@ -24,7 +33,7 @@
             {% if approved.count < 1 %}
                 <p class="text-sm py-2">No data.</p>
             {% else %}
-                <p class="text-xl">{{ approved.count }}</p>
+                <p class="text-xl font-bold">{{ approved.count }}</p>
             {% endif %}
         </a>
 
@@ -33,7 +42,7 @@
             {% if done.count < 1 %}
                 <p class="text-sm py-2">No data.</p>
             {% else %}
-                <p class="text-xl">{{ done.count }}</p>
+                <p class="text-xl font-bold">{{ done.count }}</p>
             {% endif %}
         </a>
 
@@ -42,7 +51,7 @@
             {% if onGoing.count < 1 %}
                 <p class="text-sm">Comlab is Available</p>
             {% else %}
-                <p class="text-xl">{{ onGoing.count }}</p>
+                <p class="text-xl font-bold">{{ onGoing.count }}</p>
             {% endif %}
         </a>
 
@@ -51,7 +60,7 @@
             {% if notAvailableLabs.count < 1 %}
                 <p class="text-sm py-2">Labs are available.</p>
             {% else %}
-                <p class="text-xl">{{ notAvailableLabs.count }}</p>
+                <p class="text-xl font-bold">{{ notAvailableLabs.count }}</p>
             {% endif %}
         </a>
 
@@ -60,7 +69,7 @@
             {% if rejected.count < 1 %}
                 <p class="text-sm py-2">No data.</p>
             {% else %}
-                <p class="text-xl">{{ rejected.count }}</p>
+                <p class="text-xl font-bold">{{ rejected.count }}</p>
             {% endif %}
         </a>
     </div>
@@ -71,13 +80,13 @@
             <div class="bg-white rounded-md shadow-xl">
                 <table class="border-separate rounded-md shadow-md">
                     <tr class="border boreder-2 text-center text-white bg-purple-500 rounded-md">
-                        <th class="p-2 rounded-md">WHEN</th>
                         <th class="p-2 rounded-md">REQUESTED BY</th>
+                        <th class="p-2 rounded-md">WHEN</th>
                         <th class="p-2 rounded-md">TIME IN&OUT</th>
+                        <th class="p-2 rounded-md">WHERE</th>
                         <th class="p-2 rounded-md">YEAR LEVEL</th>
                         <th class="p-2 rounded-md">COURSE</th>
                         <th class="p-2 rounded-md">STUDENT COUNT</th>
-                        <th class="p-2 rounded-md">STATUS</th>
                         <th class="p-2 rounded-md">INFO</th>
                     </tr>
                     {% if schedCount < 1 %}
@@ -87,13 +96,13 @@
                     {% endif %}
                     {% for sched in page_obj %}
                     <tr class="border boreder-2 hover:bg-gray-200 active:bg-gray-200 transition transition-delay-1 text-center cursor-pointer">
-                        <td class="p-2">{{sched.date_request}}</td>
                         <td class="p-2">{{sched.requester|upper}}</td>
+                        <td class="p-2">{{sched.date_request}}</td>
                         <td class="p-2">{{sched.time_in}} - {{sched.time_out}}</td>
+                        <td class="p-2">{{sched.comlab_room}}</td>
                         <td class="p-2">{{sched.year_level}}</td>
                         <td class="p-2">{{sched.course|upper}}</td>
                         <td class="p-2">{{sched.student_set.all.count}}</td>
-                        <td class="p-2">{{sched.status}}</td>
                         <td class="p-2">
                             <a href="{% url 'requestDetails' pk=sched.pk %}" class="p-1 bg-blue-600 rounded-md text-white hover:bg-blue-500 transition transition-dalay-1">Check</a>
                             {% comment %} <button class="p-1 bg-red-600 rounded-md text-white hover:bg-red-500 transition transition-dalay-1">Reject</button> {% endcomment %}

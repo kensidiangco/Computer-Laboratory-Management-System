@@ -1,7 +1,7 @@
 from django.views import View
-import xlwt
 import io
 import xlsxwriter
+import xlwt
 from xhtml2pdf import pisa
 import pandas as pd
 from datetime import datetime, date, time
@@ -22,6 +22,7 @@ from django.template.loader import get_template
 from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
 from django.contrib import messages
+from webpush import send_user_notification
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def studentListExport(request):
@@ -56,6 +57,16 @@ def studentListExport(request):
 @login_required(login_url=reverse_lazy("loginPage"))
 def transactionIndexPage(request):
     return render(request, './transaction/index.html')
+
+def Web_Push_Notification(request):
+    webpush = {"group": "admin" }
+    if request.user.username == "dean":
+        payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://127.0.0.1:8000/"}
+
+        send_user_notification(user=request.user, payload=payload, ttl=1000)
+        return JsonResponse({'push': "pushed"})
+    else: 
+        return JsonResponse({'push': webpush})
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def requestForm(request):
@@ -158,6 +169,54 @@ def requestDetails(request, pk):
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     if request.method == 'POST':
+        if 'export_students' in request.POST:
+            queryset = Student.objects.filter(sched=requestDetails.pk)
+
+            response = HttpResponse(content_type='application/ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="STUDENT LIST.xls"'
+
+            wb = xlwt.Workbook(encoding='utf-8')
+            ws = wb.add_sheet('STUDENT LIST')
+            ws.col(0).width  = 4000
+            ws.col(1).width  = 4000
+            ws.col(2).width  = 4000
+            ws.col(3).width  = 4000
+            ws.col(4).width  = 4000
+            ws.col(5).width  = 4000
+            ws.col(6).width  = 4000
+            ws.col(7).width  = 4000
+            ws.col(8).width  = 4000
+
+            # Sheet header, first row
+            row_num = 0
+
+            font_style = xlwt.XFStyle()
+            font_style.font.bold = True
+
+            columns = ['SCHED', 'LAB ROOM', 'STUDENT NO.', 'LAST_NAME', 'FIRST_NAME', 'MIDDLE_NAME', 'EMAIL', 'CONTACT', 'ADDRESS']
+
+            for col_num in range(len(columns)):
+                ws.write(row_num, col_num, columns[col_num], font_style)
+
+            # Sheet body, remaining rows
+            font_style = xlwt.XFStyle()
+
+            rows = queryset.values_list('sched__date_request', 'sched__comlab_room__room', 'student_no', 'last_name', 'first_name', 'middle_name', 'email', 'contact', 'address')
+            for row in rows:
+                row_num += 1
+                for col_num in range(len(row)):
+                    if isinstance(row[col_num], date):
+                        dateCol = row[col_num].strftime('%B-%d-%Y')
+                        ws.write(row_num, col_num, dateCol, font_style)
+                    elif isinstance(row[col_num], time):
+                        timeCol = row[col_num].strftime('%I:%M %p')
+                        ws.write(row_num, col_num, timeCol, font_style)
+                    else:
+                        ws.write(row_num, col_num, row[col_num], font_style)
+
+            wb.save(response)
+            return response
+
         if 'approve_sched' in request.POST:
             sched = Sched_Request.objects.get(pk=pk)
 
@@ -193,9 +252,11 @@ def requestDetails(request, pk):
         
         if 'reject_sched' in request.POST:
             sched = Sched_Request.objects.get(pk=pk)
+            description = request.POST.get('reject_description')
             Rejected_Schedule.objects.create(
                 rejected_by = request.user,
-                sched = sched
+                sched = sched,
+                description = description
             )
             requestDetails.status="Rejected"
             requestDetails.save()
@@ -204,7 +265,7 @@ def requestDetails(request, pk):
                 receiver=User.objects.get(username=sched.requester.username),
                 sender=request.user,
                 notif_for='Schedule',
-                description='Your request for {} is rejected by {}'.format(sched.date_request, request.user),
+                description='Your request for {} is rejected by {} reason: {}'.format(sched.date_request, request.user, description),
                 sched_url=sched.pk
             )
 
@@ -212,7 +273,7 @@ def requestDetails(request, pk):
                 receiver=User.objects.get(username='itdept'),
                 sender=request.user,
                 notif_for='Schedule',
-                description='{} schedule requested is rejected by {}'.format(sched.date_request, request.user),
+                description='{} schedule requested is rejected by {} reason: {}'.format(sched.date_request, request.user, description),
                 sched_url=sched.pk
             )
 
@@ -322,7 +383,7 @@ def requestDetails(request, pk):
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_approved_sched_view_only
 def approvedRequest(request):
-    approved = Sched_Request.objects.filter(status='Approved').order_by('date_created')
+    approved = Sched_Request.objects.filter(status='Approved').order_by('-date_created')
     schedCount = len(approved)
     paginator = Paginator(approved, 5)
     page_number = request.GET.get('page')
@@ -341,7 +402,7 @@ def approvedRequest(request):
 @login_required(login_url=reverse_lazy("loginPage"))
 @admin_rejected_sched_view_only
 def rejectedRequest(request):
-    rejected = Sched_Request.objects.filter(status='Rejected').order_by('date_created')
+    rejected = Sched_Request.objects.filter(status='Rejected').order_by('-date_created')
     schedCount = len(rejected)
     paginator = Paginator(rejected, 5)
     page_number = request.GET.get('page')
@@ -433,7 +494,7 @@ def Prof_Pending_Schedule(request):
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def Prof_Approved_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Approved").order_by('date_created')
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Approved").order_by('-date_created')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
@@ -453,7 +514,7 @@ def Prof_Approved_Schedule(request):
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def Prof_Rejected_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Rejected").order_by('date_created')
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Rejected").order_by('-date_created')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
@@ -473,7 +534,7 @@ def Prof_Rejected_Schedule(request):
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def Prof_Ongoing_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="On Going").order_by('date_created')
+    scheds = Sched_Request.objects.filter(requester=request.user, status="On Going").order_by('-date_created')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
@@ -493,7 +554,7 @@ def Prof_Ongoing_Schedule(request):
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def Prof_Done_Schedule(request):
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Done").order_by('date_created')
+    scheds = Sched_Request.objects.filter(requester=request.user, status="Done").order_by('-date_created')
     paginator = Paginator(scheds, 5)
 
     page_number = request.GET.get('page')
@@ -547,14 +608,25 @@ def exportData(request):
     scheds = Sched_Request.objects.all()
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
+    laboratories = Computer_Lab.objects.all()
+
     if request.method == "POST":
         DateFrom = request.POST.get('dateFrom')
         DateTo = request.POST.get('dateTo')
         sched_status = request.POST.get('sched_status')
-        if sched_status == "all":
+        Where = request.POST.get('Where')
+
+        if sched_status == "all" and Where == "all":
             queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo])
-        else:
+
+        if sched_status != "all" and Where == "all":
             queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo], status=sched_status)
+
+        if sched_status == "all" and Where != "all":
+            queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo], comlab_room=Where)
+            
+        if sched_status != "all" and Where != "all":
+            queryset = Sched_Request.objects.filter(date_request__range=[DateFrom, DateTo], status=sched_status, comlab_room=Where)
 
         data = {
             'data': queryset,
@@ -615,7 +687,8 @@ def exportData(request):
     context = {
         'page_obj': page_obj,
         'schedCount': schedCount,
-        'date_today': date_today
+        'date_today': date_today,
+        'laboratories': laboratories
     }
 
     return render(request, './transaction/exportData.html', context)

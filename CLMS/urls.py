@@ -1,21 +1,5 @@
-"""CLMS URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from xml.dom.minidom import Document
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import re_path, path, include
 from CLMS.apps.account import views
 from CLMS.apps.transaction import views as v
 from django.conf.urls.static import static
@@ -27,6 +11,9 @@ urlpatterns = [
     path('account/', include('CLMS.apps.account.urls')),
     path('schedule/', include('CLMS.apps.transaction.urls')),
     path("__reload__/", include("django_browser_reload.urls")),
+    re_path('webpush/', include('webpush.urls')),
+
+    path("notification/push/", v.Web_Push_Notification, name="Web_Push_Notification"),
     
     path('', views.index, name="index"),
     path('login/', views.loginPage, name="loginPage"),

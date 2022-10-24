@@ -10,15 +10,13 @@
         <div class="bg-white rounded-md shadow-md">
             <table class="border-separate rounded-md shadow-md">
                 <tr class="border boreder-2 text-center text-white bg-purple-500 rounded-md">
-                    <th class="p-2 rounded-md">DATE CREATED</th>
                     <th class="p-2 rounded-md">REQUESTED BY</th>
-                    <th class="p-2 rounded-md">REQUEST DATE</th>
-                    <th class="p-2 rounded-md">TIME IN</th>
-                    <th class="p-2 rounded-md">TIME OUT</th>
+                    <th class="p-2 rounded-md">WHEN</th>
+                    <th class="p-2 rounded-md">TIME IN&OUT</th>
+                    <th class="p-2 rounded-md">WHERE</th>
                     <th class="p-2 rounded-md">YEAR LEVEL</th>
-                    <th class="p-2 rounded-md">SECTION</th>
+                    <th class="p-2 rounded-md">COURSE</th>
                     <th class="p-2 rounded-md">STUDENT COUNT</th>
-                    <th class="p-2 rounded-md">STATUS</th>
                     <th class="p-2 rounded-md">INFO</th>
                 </tr>
                 {% if schedCount < 1 %}
@@ -28,15 +26,13 @@
                 {% endif %}
                 {% for sched in page_obj %}
                 <tr class="border boreder-2 hover:bg-gray-200 active:bg-gray-200 transition transition-delay-1 text-center cursor-pointer">
-                    <td class="p-2">{{sched.date_created}}</td>
                     <td class="p-2">{{sched.requester|upper}}</td>
                     <td class="p-2">{{sched.date_request}}</td>
-                    <td class="p-2">{{sched.time_in}}</td>
-                    <td class="p-2">{{sched.time_out}}</td>
+                    <td class="p-2">{{sched.time_in}} - {{sched.time_out}}</td>
+                    <td class="p-2">{{sched.comlab_room}}</td>
                     <td class="p-2">{{sched.year_level}}</td>
-                    <td class="p-2">{{sched.section}}</td>
+                    <td class="p-2">{{sched.course|upper}}</td>
                     <td class="p-2">{{sched.student_set.all.count}}</td>
-                    <td class="p-2">{{sched.status}}</td>
                     <td class="p-2">
                         <a href="{% url 'requestDetails' pk=sched.pk %}" class="p-1 bg-blue-600 rounded-md text-white hover:bg-blue-500 transition transition-dalay-1">Check</a>
                         {% comment %} <button class="p-1 bg-red-600 rounded-md text-white hover:bg-red-500 transition transition-dalay-1">Reject</button> {% endcomment %}

@@ -1,4 +1,3 @@
-from typing import ContextManager
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
 from django.contrib.auth import authenticate, login, logout
@@ -8,7 +7,7 @@ from django.urls import reverse
 from django.contrib import messages
 from ...decorators import dean_only, unauthenticated_user, admin_only, ITDept_only, prof_only
 from django.contrib.auth.models import Group
-from .models import Notification, Theme, Profile
+from .models import Notification, Profile
 from ..transaction.models import Computer_Lab, Sched_Request
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator
@@ -21,7 +20,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib import messages
-from datetime import datetime
+from datetime import datetime, date, time
+from datetime import timedelta
 
 def password_reset_request(request):
 	if request.method == "POST":
@@ -164,13 +164,15 @@ def adminDashboard(request):
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
-    scheds = Sched_Request.objects.filter(status="Pending").order_by('-date_created')
-    
-    recent_request = []
-    for sched in scheds:
-        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
-        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
-            recent_request.append(sched)
+    # last week request
+    start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+    today = datetime.strptime(start_date, "%Y-%m-%d")
+    end = today - timedelta(days=7)
+    start = today + timedelta(days=1)
+
+    start_today = start.strftime("%Y-%m-%d")
+    end_date = end.strftime("%Y-%m-%d")
+    recent_request = pending.filter(date_created__range=[end_date, start_today])
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -190,7 +192,6 @@ def adminDashboard(request):
         'onGoing': onGoing,
         'done': done,
         'date_today': date_today,
-        'scheds': scheds,
         'page_obj': page_obj,
         'schedCount': schedCount,
     }
@@ -207,13 +208,15 @@ def deanDashboard(request):
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
-    scheds = Sched_Request.objects.filter(status="Pending").order_by('-date_created')
-    
-    recent_request = []
-    for sched in scheds:
-        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
-        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
-            recent_request.append(sched)
+    # last week request
+    start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+    today = datetime.strptime(start_date, "%Y-%m-%d")
+    end = today - timedelta(days=7)
+    start = today + timedelta(days=1)
+
+    start_today = start.strftime("%Y-%m-%d")
+    end_date = end.strftime("%Y-%m-%d")
+    recent_request = pending.filter(date_created__range=[end_date, start_today])
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -233,7 +236,6 @@ def deanDashboard(request):
         'onGoing': onGoing,
         'done': done,
         'date_today': date_today,
-        'scheds': scheds,
         'page_obj': page_obj,
         'schedCount': schedCount,
     }
@@ -250,13 +252,15 @@ def ITDeptDashboard(request):
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
-    scheds = Sched_Request.objects.filter(status="Pending").order_by('-date_created')
-    
-    recent_request = []
-    for sched in scheds:
-        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
-        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
-            recent_request.append(sched)
+    # last week request
+    start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+    today = datetime.strptime(start_date, "%Y-%m-%d")
+    end = today - timedelta(days=7)
+    start = today + timedelta(days=1)
+
+    start_today = start.strftime("%Y-%m-%d")
+    end_date = end.strftime("%Y-%m-%d")
+    recent_request = pending.filter(date_created__range=[end_date, start_today])
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -276,7 +280,6 @@ def ITDeptDashboard(request):
         'onGoing': onGoing,
         'done': done,
         'date_today': date_today,
-        'scheds': scheds,
         'page_obj': page_obj,
         'schedCount': schedCount,
     }
@@ -287,10 +290,13 @@ def userLogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
 
+import pytz
+from pytz import timezone
+
 @login_required(login_url=reverse_lazy("loginPage"))
 @prof_only
 def profDashboard(request):
-    sched = Sched_Request.objects.filter(requester=request.user)
+    sched = Sched_Request.objects.filter(requester=request.user).order_by('-date_created')
 
     pendingSched = sched.filter(status="Pending")
     onGoingSched = sched.filter(status="On Going")
@@ -301,13 +307,15 @@ def profDashboard(request):
     availableLabs = Computer_Lab.objects.filter(status="Available") 
     notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
 
-    scheds = Sched_Request.objects.filter(requester=request.user, status="Pending").order_by('-date_created')
-    
-    recent_request = []
-    for sched in scheds:
-        print("sched: ", sched.date_created.strftime('%B %d, %Y'), str(datetime.today().strftime('%B %d, %Y')))
-        if str(sched.date_created.strftime('%B %d, %Y')) == str(datetime.today().strftime('%B %d, %Y')):
-            recent_request.append(sched)
+    # last week request
+    start_date = pendingSched.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+    today = datetime.strptime(start_date, "%Y-%m-%d")
+    end = today - timedelta(days=7)
+    start = today + timedelta(days=1)
+
+    start_today = start.strftime("%Y-%m-%d")
+    end_date = end.strftime("%Y-%m-%d")
+    recent_request = pendingSched.filter(date_created__range=[end_date, start_today])
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -325,7 +333,6 @@ def profDashboard(request):
         'approvedSched': approvedSched,
         'rejectedSched': rejectedSched,
         'sched': sched,
-        'scheds': scheds,
         'page_obj': page_obj,
         'schedCount': schedCount,
         'date_today':date_today

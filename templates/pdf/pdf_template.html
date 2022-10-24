@@ -65,16 +65,16 @@
         <!-- HTML Content -->
         <table>
                 <tr>
-                    <td>Don Quijote Dimasalang</td>
+                    <td>Dimasalang cor, Don Quijote St, Sampaloc, Manila, 1008 Metro Manila</td>
                     <td>0921-401-5874</td>
                 </tr>
                 <tr>
                     <td>Manila PH,</td>
-                    <td>sjc-clms@gmail.com</td>
+                    <td>clms.sjc@gmail.com</td>
                 </tr>
                 <tr>
                     <td>1012</td>
-                    <td>SJC-CLMS.com</td>
+                    <td>clms-sjc.herokuapp.com</td>
                 </tr>
         </table>
 
@@ -83,31 +83,29 @@
     
         <table id="data">
             <tr>
-                <th>No.</th>
-                <th>Req. by</th>
-                <th>Course</th>
-                <th>Year</th>
-                <th>Section</th>
-                <th>Students</th>
-                <th>Date</th>
-                <th>Time In</th>
-                <th>Time Out</th>
-                <th>Status</th>
+                <th>NO.</th>
+                <th>REQUESTED BY</th>
+                <th>COURSE</th>
+                <th>YEAR&SEC</th>
+                <th>STUDENT COUNT</th>
+                <th>WHEN</th>
+                <th>TIME IN&OUT</th>
+                <th>WHERE</th>
+                <th>STATUS</th>
                 {% comment %} <th>Status</th> {% endcomment %}
             </tr>
 
             {% for sched in data  %}
                 <tr>
                     <td class="data">{{forloop.counter}}</td>
-                    <td class="data">{{sched.requester}}</td>
-                    <td class="data">{{sched.course}}</td>
-                    <td class="data">{{sched.year_level}}</td>
-                    <td class="data">{{sched.section}}</td>
+                    <td class="data">{{sched.requester|upper}}</td>
+                    <td class="data">{{sched.course|upper}}</td>
+                    <td class="data">{{sched.year_level|upper}}, sec: {{sched.section}}</td>
                     <td class="data">{{sched.student_set.all.count}}</td>
                     <td class="data">{{sched.date_request}}</td>
-                    <td class="data">{{sched.time_in}}</td>
-                    <td class="data">{{sched.time_out}}</td>
-                    <td class="data">{{sched.status}}</td>
+                    <td class="data">{{sched.time_in}} - {{sched.time_out}}</td>
+                    <td class="data">{{sched.comlab_room}}</td>
+                    <td class="data">{{sched.status|upper}}</td>
                     {% comment %} <td class="data">{{sched.status}}</td> {% endcomment %}
                 </tr>
             {% endfor %}

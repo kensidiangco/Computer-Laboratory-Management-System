@@ -29,10 +29,7 @@ class Sched_Request(models.Model):
 
     class Meta:
         ordering = ('-date_created',)
-
-    def __str__(self):
-        return "Requested by {0}".format(self.requester.username)
-
+        
 class Student(models.Model):
     sched = models.ForeignKey(Sched_Request, on_delete=models.CASCADE)
     student_no = models.CharField(_("student_no"), max_length=50)

@@ -16,9 +16,12 @@
                         {% if status == "All" %}
                             <input name="All" type="submit" value="All"  class="hover:bg-gray-50 bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
                             <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
-                        {% else %}
+                        {% elif status == "Unread" %}
                             <input name="All" type="submit" value="All"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
                             <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-50 bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                        {% else %}
+                            <input name="All" type="submit" value="All"  class="hover:bg-gray-50 bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
+                            <input name="Unread" type="submit" value="Unread"  class="hover:bg-gray-100 rounded-xl p-2 font-bold cursor-pointer " />
                         {% endif %}
                     </form>
 

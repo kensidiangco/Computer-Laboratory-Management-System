@@ -25,7 +25,7 @@
       }
 </script>
 <div class="flex flex-col gap-4 pb-10 px-4">
-  <p class="text-2xl py-4 font-bold">CLMS Requested Schedule Report</p>
+  <p class="text-2xl py-4 font-bold">CLMS Schedule Report</p>
     <div class="flex">
         <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
     </div>
@@ -56,11 +56,20 @@
                     <label for="sched_status" class="text-gray-600">Status:</label>
                     <select name="sched_status" id="sched_status" class="rounded-md transition transition-delay-1" required>
                         <option value="" selected disabled>Select schedule status...</option>
-                        <option value="all">All status</option>
+                        <option value="all">All Status</option>
                         <option value="Done">Done</option>
                         <option value="Approved">Approved</option>
                         <option value="Rejected">Rejected</option>
                         <option value="On Going">On Going</option>
+                    </select>
+
+                    <label for="Where" class="text-gray-600">Laboratory:</label>
+                    <select name="Where" id="Where" class="rounded-md transition transition-delay-1" required>
+                        <option value="" selected disabled>Select Laboratory...</option>
+                        <option value="all">All Laboratories</option>
+                        {% for lab in laboratories  %}
+                          <option value="{{lab.pk}}">{{lab.room}}</option>
+                        {% endfor %}
                     </select>
                     <input 
                         type="submit" 

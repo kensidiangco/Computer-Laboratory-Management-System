@@ -1,5 +1,5 @@
 {% load static %}
-<div class="pr-4 flex flex-col">
+<div class="md:block hidden pr-4 flex flex-col">
     <div class="flex py-4 flex-col flex-end items-end">
         <div class="flex items-center gap-4">
             <div>
@@ -15,7 +15,19 @@
                 {% endif %}
             </div>
             <div>
-                <a href="{% url 'profile' %}"><img src="{% static 'images/avatar.png'%}" class="cursor-pointer" style="width: 3.5em;" /></a>
+                <button onClick="OpenModal()"><img src="{% static 'images/avatar.png'%}" class="cursor-pointer hover:drop-shadow-xl transition transition-delay-1" style="width: 3.5em;" /></button>
+            </div>
+            <div id="modal" class="hidden absolute top-16 p-4 backdrop-blur-xl bg-white/60 rounded-md z-50 flex flex-col gap-4 font-bold right-10 border shadow-xl">
+                <a href="{% url 'profile' %}" class="hover:drop-shadow-xl transition transition-delay-1">View Profile</a>
+                <a href="{% url 'notification_page' %}" class="hover:drop-shadow-xl transition transition-delay-1">
+                    Notifications 
+                    {% if notification_count.count > 0 %}
+                    <span class="bg-red-600 text-white px-2 rounded-md text-sm">
+                        <span class="total-unread1"></span>
+                    </span> 
+                    {% endif %}
+                </a>
+                <a href="{% url 'logout' %}" class="hover:drop-shadow-xl transition transition-delay-1">Logout Account</a>
             </div>
         </div>
     </div>
@@ -66,3 +78,4 @@
         </div>
     </div>
 </div>
+<script src="{% static '/js/profileModal.js' %}"></script>
