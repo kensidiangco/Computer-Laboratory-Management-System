@@ -139,20 +139,26 @@
                                 _totalUnread = '';
                                 _totalUnread1 = '';
                                 _notifStatus='';
+                                _notifCount='';
                                 _json = $.parseJSON(res.totalUnread);
 
                                 if(_json > 0) {
-                                    _notifStatus='<button type="button" class="text-sm pb-1 text-blue-500 cursor-pointer float-right w-full mark-all-read">Mark all as read</button>'
-                                    _totalUnread += 'New ' + _json
-                                    _totalUnread1 += _json
+                                    _notifStatus='<button type="button" class="text-sm pb-1 text-blue-500 cursor-pointer float-right w-full mark-all-read">Mark all as read</button>';
+                                    _totalUnread += 'New ' + _json;
+                                    _totalUnread1 += '<span class="bg-red-600 text-white px-2 rounded-md text-sm">'+ _json +'</span>';
+                                    _notifCount += '<span class="rounded-xl text-white bg-red-600 shadow-md absolute px-2">'+ _json +'</span>';
                                 } else {
                                     _notifStatus='<p class="text-gray-600 text-sm text-center">No new updates.</p>'
+                                    _notifCount="";
+                                    _totalUnread="";
+                                    _totalUnread1="";
                                 }
 
                                 $('.notif-status').html(_notifStatus);
                                 $('.total-unread').html(_totalUnread);
                                 $('.total-unread1').html(_totalUnread1);
-                                $(".ajaxRes").hide();
+                                $('.notif-count').html(_notifCount);
+                                $('.ajaxRes').hide();
                             }
                         })
                     }, 500)

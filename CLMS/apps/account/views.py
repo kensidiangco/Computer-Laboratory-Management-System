@@ -3,13 +3,12 @@ from .forms import RegisterForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from django.contrib import messages
 from ...decorators import dean_only, unauthenticated_user, admin_only, ITDept_only, prof_only
 from django.contrib.auth.models import Group
 from .models import Notification, Profile
 from ..transaction.models import Computer_Lab, Sched_Request
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.core.paginator import Paginator
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
@@ -20,8 +19,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
 from django.contrib import messages
-from datetime import datetime, date, time
-from datetime import timedelta
+from datetime import datetime, date, time, timedelta
 
 def password_reset_request(request):
 	if request.method == "POST":

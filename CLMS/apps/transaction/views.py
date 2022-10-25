@@ -14,7 +14,7 @@ from .models import Approved_Schedule, Computer_Lab, Rejected_Schedule, Student,
 from django.http import JsonResponse 
 from .forms import LaboratoryCreateForm, ScheduleRequestForm, StudentForm
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -157,6 +157,8 @@ def requestList(request):
 @login_required(login_url=reverse_lazy("loginPage"))
 def requestDetails(request, pk):
     requestDetails = get_object_or_404(Sched_Request, pk=pk)
+
+    rejected_description = Rejected_Schedule.objects.get(sched=requestDetails.pk)
     
     group = list(request.user.groups.values_list('name', flat = True))
     
@@ -169,6 +171,13 @@ def requestDetails(request, pk):
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     if request.method == 'POST':
+        if 'deleteRequest' in request.POST:
+            print("deleted")
+            requestDetails.delete()
+            messages.success(request, "Request successfuly canceled.")
+
+            return HttpResponseRedirect(reverse("profDashboard"))
+
         if 'export_students' in request.POST:
             queryset = Student.objects.filter(sched=requestDetails.pk)
 
@@ -249,6 +258,8 @@ def requestDetails(request, pk):
                 description='{} schedule requested is approved by {}'.format(sched.date_request, request.user),
                 sched_url=sched.pk
             )
+
+            messages.success(request, "This request has been approved.")
         
         if 'reject_sched' in request.POST:
             sched = Sched_Request.objects.get(pk=pk)
@@ -276,6 +287,7 @@ def requestDetails(request, pk):
                 description='{} schedule requested is rejected by {} reason: {}'.format(sched.date_request, request.user, description),
                 sched_url=sched.pk
             )
+            messages.error(request, "This request has been rejected.")
 
         if 'timein' in request.POST:
             sched = Sched_Request.objects.get(pk=pk)
@@ -367,7 +379,8 @@ def requestDetails(request, pk):
             'hour': h,
             'min': m,
             'sec': s,
-            'date_today': date_today
+            'date_today': date_today,
+            'rejected_description': rejected_description
         }
         return render(request, './transaction/requestDetails.html', context)
     except:
@@ -376,7 +389,8 @@ def requestDetails(request, pk):
             'requestDetails': requestDetails,
             'page_obj': page_obj, 
             'group': group,
-            'date_today': date_today
+            'date_today': date_today,
+            'rejected_description': rejected_description
         }
         return render(request, './transaction/requestDetails.html', context)
 

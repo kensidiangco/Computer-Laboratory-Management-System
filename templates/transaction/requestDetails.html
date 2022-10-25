@@ -4,11 +4,20 @@
 {% block content %}
 <div class="pb-8 mx-10">
     <p class="text-2xl py-4 font-bold">Details</p>
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <p class="bg-red-500 text-white rounded-md py-1 text-center">{{ message }}</p>
+        {% else %}
+            <p class="bg-green-500 text-white rounded-md py-1 text-center">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+
     <div class="flex justify-between items-center py-4 pb-8">
         
         <div class="flex">
             <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
         </div>
+        
         {% if request.user.username == requestDetails.requester.username and requestDetails.status == "Pending" %}
             <div class="">
                 <input type="button" class="text-red-500 p-1 px-4 border-2 border-red-500 hover:bg-red-400 hover:text-white cursor-pointer rounded-md transition transition-delay-1" value="Cancel Request" onClick="OpenCancel()"/>
@@ -44,8 +53,6 @@
         {% endif %}
     </div>
 
-
-    
     <div class="flex flex-wrap gap-4 justify-center mx-16">
 
         <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-purple-600">
@@ -88,6 +95,11 @@
             <p class="text-xl">{{ requestDetails.date_created }}</p>
         </div>
 
+        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-red-600">
+            <p class="text-sm text-gray-900">Reason for rejection</p>
+            <p class="text-xl">{{rejected_description.description}}</p>
+        </div>
+
     </div>
     
     {% if time_usage.time_in == null %}
@@ -127,13 +139,16 @@
 
     <div class="relative hidden" id="CancelModal">
 
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-md bg-white/30 backdrop backdrop-blur-xl shadow-xl">
-            <div class="flex flex-col gap-4">
-                <p class="font-bold text-xl">Cancel</p>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-md bg-white/30 backdrop backdrop-blur-xl shadow-xl border border-2 border-gray-500">
+            <div class="flex flex-col gap-4 shadow-xl">
+                <p class="font-bold text-2xl"><span class="text-red-500 text-4xl">x </span>Cancel</p>
                 <p class="text-sm">Are you sure you want to cancel your request?</p>
                 <div class="flex justify-between gap-2">
                     <input type="button" class="text-white p-1 px-4 bg-gray-500 hover:bg-gray-400 cursor-pointer rounded-md transition transition-delay-1" value="No don't cancel" onClick="closeCancelModal()" />
-                    <input type="button" class="text-white p-1 px-4 bg-red-500 hover:bg-red-400 cursor-pointer rounded-md transition transition-delay-1" value="Cancel request" />
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="submit" class="text-white p-1 px-4 bg-red-500 hover:bg-red-400 cursor-pointer rounded-md transition transition-delay-1" name="deleteRequest" value="Cancel request" />
+                    </form>
                 </div>
 
             </div>
@@ -142,12 +157,12 @@
 
     <div class="relative hidden" id="RejectModal">
 
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-md bg-white/30 backdrop backdrop-blur-xl shadow-xl">
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-md bg-white/30 backdrop backdrop-blur-xl shadow-xl border border-2 border-gray-500">
             <form class="flex flex-col gap-4" method="POST">
-                <p class="font-bold text-xl">Reject</p>
+                <p class="font-bold text-2xl"><span class="text-red-500 text-4xl">x </span>Reject</p>
                 <p class="text-sm">Are you sure you want to reject this request? why?</p>
                 {% csrf_token %}
-                <textarea name="reject_description" placeholder="Description of why you rejected the request..." required></textarea>
+                <textarea name="reject_description" class="rounded-md" placeholder="Description of why you rejected the request..." required></textarea>
                 <div class="flex justify-between gap-2">
                     <input type="button" class="text-white p-1 px-4 bg-gray-500 hover:bg-gray-400 cursor-pointer rounded-md transition transition-delay-1" value="No" onClick="closeRejectModal()" />
                     <input type="submit" name="reject_sched" class="text-white p-1 px-4 bg-red-500 hover:bg-red-400 cursor-pointer rounded-md transition transition-delay-1" value="Submit and reject this request" />

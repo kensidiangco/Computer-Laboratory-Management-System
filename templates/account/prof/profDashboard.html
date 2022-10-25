@@ -8,6 +8,14 @@
     <div class="flex">
         <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
     </div>
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <p class="bg-red-500 text-white rounded-md py-1 text-center">{{ message }}</p>
+        {% else %}
+            <p class="bg-green-500 text-white rounded-md py-1 text-center">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+
     <div class="flex flex-wrap justify-center gap-4 py-4">
         <a href="{% url 'Prof_Pending_Schedule' %}" class="p-4 bg-white rounded-xl shadow-xl boder-0 border-l-8 border-l-purple-600">
             <p class="text-gray-900">My Pending Schedule</p>
