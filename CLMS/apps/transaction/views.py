@@ -162,7 +162,10 @@ def requestList(request):
 def requestDetails(request, pk):
     requestDetails = get_object_or_404(Sched_Request, pk=pk)
 
-    rejected_description = Rejected_Schedule.objects.get(sched=requestDetails.pk)
+    if requestDetails.status == 'Rejected':
+        rejected_description = Rejected_Schedule.objects.get(sched=requestDetails.pk)
+    else:
+        rejected_description = "This request is not rejected either approved."
     
     group = list(request.user.groups.values_list('name', flat = True))
     
