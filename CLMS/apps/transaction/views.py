@@ -124,8 +124,12 @@ def requestForm(request):
                     email= element['email'],
                     address= element['address']
                 )
-
+            messages.success(request, 'New request successfully created!')
             return redirect('requestDetails', pk=sched.pk)
+
+        else:
+            messages.error(request, 'There something wrong on validating your new request! try again later.')
+            return redirect('requestForm')
 
     schedForm = ScheduleRequestForm()
     studentForm = StudentForm()

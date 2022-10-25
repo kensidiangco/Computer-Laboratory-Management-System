@@ -95,10 +95,12 @@
             <p class="text-xl">{{ requestDetails.date_created }}</p>
         </div>
 
-        <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-red-600">
-            <p class="text-sm text-gray-900">Reason for rejection</p>
-            <p class="text-xl">{{rejected_description.description}}</p>
-        </div>
+        {% if rejected_description %}
+            <div class="p-4 bg-white rounded-md shadow-xl border-0 border-l-8 border-red-600">
+                <p class="text-sm text-gray-900">Reason for rejection</p>
+                <p class="text-xl">{{rejected_description.description}}</p>
+            </div>
+        {% endif %}
 
     </div>
     
