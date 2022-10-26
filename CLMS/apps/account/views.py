@@ -173,7 +173,7 @@ def adminDashboard(request):
         end_date = end.strftime("%Y-%m-%d")
         recent_request = pending.filter(date_created__range=[end_date, start_today])
     except:
-        recent_request = None
+        recent_request = []
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -223,7 +223,7 @@ def deanDashboard(request):
         end_date = end.strftime("%Y-%m-%d")
         recent_request = pending.filter(date_created__range=[end_date, start_today])
     except:
-        recent_request = None
+        recent_request = []
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -273,7 +273,7 @@ def ITDeptDashboard(request):
         end_date = end.strftime("%Y-%m-%d")
         recent_request = pending.filter(date_created__range=[end_date, start_today])
     except:
-        recent_request = None
+        recent_request = []
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -338,7 +338,7 @@ def profDashboard(request):
     
     except:
         
-        recent_request = None
+        recent_request = []
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
