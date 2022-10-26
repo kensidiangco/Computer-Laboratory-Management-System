@@ -61,7 +61,7 @@ def transactionIndexPage(request):
 def Web_Push_Notification(request):
     webpush = {"group": "admin" }
     if request.user.username == "dean":
-        payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+        payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{}/".format(requestDetails.pk)}
 
         send_user_notification(user=request.user, payload=payload, ttl=1000)
         return JsonResponse({'push': "pushed"})
@@ -113,7 +113,7 @@ def requestForm(request):
                 sched_url=sched.pk
             )
 
-            payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+            payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{}/".format(requestDetails.pk)}
 
             send_user_notification(user=request.user, payload=payload, ttl=1000)
 
@@ -274,7 +274,7 @@ def requestDetails(request, pk):
                 sched_url=sched.pk
             )
 
-            payload = {"head": "Schedule has been approved!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+            payload = {"head": "Schedule has been approved!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{}/".format(requestDetails.pk)}
 
             send_user_notification(user=request.user, payload=payload, ttl=1000)
 
@@ -307,7 +307,7 @@ def requestDetails(request, pk):
                 sched_url=sched.pk
             )
 
-            payload = {"head": "Schedule has been rejected!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+            payload = {"head": "Schedule has been rejected!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{}/".format(requestDetails.pk)}
 
             send_user_notification(user=request.user, payload=payload, ttl=1000)
 
@@ -376,7 +376,7 @@ def requestDetails(request, pk):
                 sched_url=sched.pk
             )
 
-            payload = {"head": "Schedule done!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+            payload = {"head": "Schedule done!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{}/".format(requestDetails.pk)}
 
             send_user_notification(user=request.user, payload=payload, ttl=1000)
 
