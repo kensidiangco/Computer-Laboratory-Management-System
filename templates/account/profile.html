@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load webpush_notifications %}
 
 {% block title %}CLMS | {{ request.user.first_name }}{% endblock title %}
 
 {% block content %}
-    <div class="flex justify-center items-center h-screen">
-        <p>Profile page </p>
+    <div class="flex justify-center items-center h-screen gap-4 flex-col font-bold">
+        {% webpush_button with_class="" %}
     </div>
 {% endblock  %}

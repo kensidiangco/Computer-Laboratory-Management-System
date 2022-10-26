@@ -187,7 +187,7 @@ def requestDetails(request, pk):
             requestDetails.delete()
             messages.success(request, "Request successfuly canceled.")
 
-            payload = {"head": "Schedule Request Canceled!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+            payload = {"head": "Schedule Request Canceled!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/"}
 
             send_user_notification(user=request.user, payload=payload, ttl=1000)
 
