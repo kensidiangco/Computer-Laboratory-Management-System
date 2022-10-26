@@ -179,7 +179,10 @@ def adminDashboard(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(recent_request)
+    if recent_request:
+        schedCount = len(recent_request)
+    else:
+        schedCount = 0
 
     availableLabs = Computer_Lab.objects.filter(status="Available") 
     notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
@@ -226,7 +229,10 @@ def deanDashboard(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(recent_request)
+    if recent_request:
+        schedCount = len(recent_request)
+    else:
+        schedCount = 0
 
     availableLabs = Computer_Lab.objects.filter(status="Available") 
     notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
@@ -273,7 +279,10 @@ def ITDeptDashboard(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(recent_request)
+    if recent_request:
+        schedCount = len(recent_request)
+    else:
+        schedCount = 0
 
     availableLabs = Computer_Lab.objects.filter(status="Available") 
     notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
@@ -335,7 +344,10 @@ def profDashboard(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    schedCount = len(recent_request)
+    if recent_request:
+        schedCount = len(recent_request)
+    else:
+        schedCount = 0
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     context = {
