@@ -26,7 +26,7 @@ from webpush import send_user_notification
 
 @login_required(login_url=reverse_lazy("loginPage"))
 def studentListExport(request):
-# create our spreadsheet.  I will create it in memory with a StringIO
+    # create our spreadsheet.  I will create it in memory with a StringIO
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet()
@@ -61,7 +61,7 @@ def transactionIndexPage(request):
 def Web_Push_Notification(request):
     webpush = {"group": "admin" }
     if request.user.username == "dean":
-        payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://127.0.0.1:8000/"}
+        payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
 
         send_user_notification(user=request.user, payload=payload, ttl=1000)
         return JsonResponse({'push': "pushed"})
@@ -112,6 +112,10 @@ def requestForm(request):
                 description='New schedule request',
                 sched_url=sched.pk
             )
+
+            payload = {"head": "New Schedule Request!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+
+            send_user_notification(user=request.user, payload=payload, ttl=1000)
 
             for element in df.to_dict('records'):
                 Student.objects.create(
@@ -182,6 +186,10 @@ def requestDetails(request, pk):
             print("deleted")
             requestDetails.delete()
             messages.success(request, "Request successfuly canceled.")
+
+            payload = {"head": "Schedule Request Canceled!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+
+            send_user_notification(user=request.user, payload=payload, ttl=1000)
 
             return HttpResponseRedirect(reverse("profDashboard"))
 
@@ -266,6 +274,10 @@ def requestDetails(request, pk):
                 sched_url=sched.pk
             )
 
+            payload = {"head": "Schedule has been approved!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+
+            send_user_notification(user=request.user, payload=payload, ttl=1000)
+
             messages.success(request, "This request has been approved.")
         
         if 'reject_sched' in request.POST:
@@ -294,6 +306,11 @@ def requestDetails(request, pk):
                 description='{} schedule requested is rejected by {} reason: {}'.format(sched.date_request, request.user, description),
                 sched_url=sched.pk
             )
+
+            payload = {"head": "Schedule has been rejected!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+
+            send_user_notification(user=request.user, payload=payload, ttl=1000)
+
             messages.error(request, "This request has been rejected.")
 
         if 'timein' in request.POST:
@@ -358,6 +375,10 @@ def requestDetails(request, pk):
                 description='{} left the comlab at {}'.format(request.user, datetime.now().strftime("%H:%M")),
                 sched_url=sched.pk
             )
+
+            payload = {"head": "Schedule done!", "body": "Click to view details.", "icon": "https://i.imgur.com/dRDxiCQ.png", "url": "http://clms-sjc.herokuapp.com/schedule/request/{requestDetails.pk}/"}
+
+            send_user_notification(user=request.user, payload=payload, ttl=1000)
 
     try:
         time_usage = Sched_Time_Usage.objects.get(sched=approvedId.first())
