@@ -163,14 +163,17 @@ def adminDashboard(request):
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     # last week request
-    start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
-    today = datetime.strptime(start_date, "%Y-%m-%d")
-    end = today - timedelta(days=7)
-    start = today + timedelta(days=1)
+    try:
+        start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+        today = datetime.strptime(start_date, "%Y-%m-%d")
+        end = today - timedelta(days=7)
+        start = today + timedelta(days=1)
 
-    start_today = start.strftime("%Y-%m-%d")
-    end_date = end.strftime("%Y-%m-%d")
-    recent_request = pending.filter(date_created__range=[end_date, start_today])
+        start_today = start.strftime("%Y-%m-%d")
+        end_date = end.strftime("%Y-%m-%d")
+        recent_request = pending.filter(date_created__range=[end_date, start_today])
+    except:
+        recent_request = None
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -207,14 +210,17 @@ def deanDashboard(request):
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     # last week request
-    start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
-    today = datetime.strptime(start_date, "%Y-%m-%d")
-    end = today - timedelta(days=7)
-    start = today + timedelta(days=1)
+    try:
+        start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+        today = datetime.strptime(start_date, "%Y-%m-%d")
+        end = today - timedelta(days=7)
+        start = today + timedelta(days=1)
 
-    start_today = start.strftime("%Y-%m-%d")
-    end_date = end.strftime("%Y-%m-%d")
-    recent_request = pending.filter(date_created__range=[end_date, start_today])
+        start_today = start.strftime("%Y-%m-%d")
+        end_date = end.strftime("%Y-%m-%d")
+        recent_request = pending.filter(date_created__range=[end_date, start_today])
+    except:
+        recent_request = None
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -251,14 +257,17 @@ def ITDeptDashboard(request):
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
 
     # last week request
-    start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
-    today = datetime.strptime(start_date, "%Y-%m-%d")
-    end = today - timedelta(days=7)
-    start = today + timedelta(days=1)
+    try:
+        start_date = pending.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+        today = datetime.strptime(start_date, "%Y-%m-%d")
+        end = today - timedelta(days=7)
+        start = today + timedelta(days=1)
 
-    start_today = start.strftime("%Y-%m-%d")
-    end_date = end.strftime("%Y-%m-%d")
-    recent_request = pending.filter(date_created__range=[end_date, start_today])
+        start_today = start.strftime("%Y-%m-%d")
+        end_date = end.strftime("%Y-%m-%d")
+        recent_request = pending.filter(date_created__range=[end_date, start_today])
+    except:
+        recent_request = None
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
@@ -306,14 +315,21 @@ def profDashboard(request):
     notAvailableLabs = Computer_Lab.objects.filter(status="Not Available") 
 
     # last week request
-    start_date = pendingSched.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
-    today = datetime.strptime(start_date, "%Y-%m-%d")
-    end = today - timedelta(days=7)
-    start = today + timedelta(days=1)
+    
+    try:
 
-    start_today = start.strftime("%Y-%m-%d")
-    end_date = end.strftime("%Y-%m-%d")
-    recent_request = pendingSched.filter(date_created__range=[end_date, start_today])
+        start_date = pendingSched.first().date_created.astimezone(timezone("Asia/Manila")).strftime("%Y-%m-%d")
+        today = datetime.strptime(start_date, "%Y-%m-%d")
+        end = today - timedelta(days=7)
+        start = today + timedelta(days=1)
+
+        start_today = start.strftime("%Y-%m-%d")
+        end_date = end.strftime("%Y-%m-%d")
+        recent_request = pendingSched.filter(date_created__range=[end_date, start_today])
+    
+    except:
+        
+        recent_request = None
 
     paginator = Paginator(recent_request, 5)
     page_number = request.GET.get('page')
