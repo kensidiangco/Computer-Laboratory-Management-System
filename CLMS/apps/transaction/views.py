@@ -8,7 +8,7 @@ from datetime import datetime, date, time
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core import serializers
-from ...decorators import admin_pending_sched_view_only, admin_approved_sched_view_only, admin_rejected_sched_view_only, admin_done_sched_view_only, admin_ongoing_sched_view_only
+from ...decorators import admin_only, admin_pending_sched_view_only, admin_approved_sched_view_only, admin_rejected_sched_view_only, admin_done_sched_view_only, admin_ongoing_sched_view_only
 from CLMS.apps.account.models import Notification
 from .models import Approved_Schedule, Computer_Lab, Rejected_Schedule, Student, Sched_Request, Sched_Time_Usage
 from django.http import JsonResponse 
@@ -759,6 +759,8 @@ def request_account(request):
 
     return render(request, './transaction/request_account.html')
 
+@login_required(login_url=reverse_lazy("loginPage"))
+@admin_only
 def LaboratoryCreateView(request):
     LabForm = LaboratoryCreateForm()
     labs = Computer_Lab.objects.all()
@@ -785,6 +787,7 @@ def LaboratoryCreateView(request):
     }
     return render(request, 'transaction/forms/LaboratoryCreatePage.html', context)
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def LabDetails(request, pk):
     lab = get_object_or_404(Computer_Lab, pk=pk)
     pending_sched = Sched_Request.objects.filter(comlab_room=lab, status="Pending")
@@ -806,8 +809,8 @@ def LabDetails(request, pk):
     
     return render(request, 'transaction/laboratory/LabDetails.html', ctx)
 
+@login_required(login_url=reverse_lazy("loginPage"))
 def laboratoriesListView(request):
-
     available_lab = Computer_Lab.objects.filter(status="Available")
     not_available = Computer_Lab.objects.filter(status="Not Available")
 
@@ -815,10 +818,18 @@ def laboratoriesListView(request):
     available_page_number = request.GET.get('page')
     available_page_obj = available_paginator.get_page(available_page_number)
     labsCount = len(available_lab)
+
+    not_available_paginator = Paginator(not_available, 5)
+    not_available_page_number = request.GET.get('page')
+    not_available_page_obj = not_available_paginator.get_page(not_available_page_number)
+    na_labsCount = len(not_available)
     
     ctx = {
         'available_page_obj': available_page_obj,
         'labsCount': labsCount,
         'date_today': datetime.today().strftime('%B %d, %Y %H:%M:%p'),
+        
+        'not_available_page_obj': not_available_page_obj,
+        'na_labsCount': na_labsCount
     }
     return render(request, './transaction/laboratory/laboratoriesListView.html', ctx)

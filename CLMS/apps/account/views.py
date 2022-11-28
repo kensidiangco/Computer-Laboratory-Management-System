@@ -157,7 +157,7 @@ def adminDashboard(request):
     pending = Sched_Request.objects.filter(status="Pending")
     approved = Sched_Request.objects.filter(status="Approved")
     rejected = Sched_Request.objects.filter(status="Rejected")
-    onGoing = Sched_Request.objects.filter(status="On going")
+    onGoing = Sched_Request.objects.filter(status="On Going")
     done = Sched_Request.objects.filter(status="Done")
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
@@ -207,7 +207,7 @@ def deanDashboard(request):
     pending = Sched_Request.objects.filter(status="Pending")
     approved = Sched_Request.objects.filter(status="Approved")
     rejected = Sched_Request.objects.filter(status="Rejected")
-    onGoing = Sched_Request.objects.filter(status="On going")
+    onGoing = Sched_Request.objects.filter(status="On Going")
     done = Sched_Request.objects.filter(status="Done")
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')
@@ -257,7 +257,7 @@ def ITDeptDashboard(request):
     pending = Sched_Request.objects.filter(status="Pending")
     approved = Sched_Request.objects.filter(status="Approved")
     rejected = Sched_Request.objects.filter(status="Rejected")
-    onGoing = Sched_Request.objects.filter(status="On going")
+    onGoing = Sched_Request.objects.filter(status="On Going")
     done = Sched_Request.objects.filter(status="Done")
 
     date_today = datetime.today().strftime('%B %d, %Y %H:%M:%p')

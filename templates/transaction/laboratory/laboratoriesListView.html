@@ -3,7 +3,7 @@
 {% block title %}Schedule | Laboratories{% endblock  %}
 {% block content %}
 <div class="flex flex-col gap-4 pb-10 px-4 mx-10">
-    <p class="text-2xl py-4 font-bold">Pending Schedules</p>
+    <p class="text-2xl py-4 font-bold">Laboratories</p>
     <div class="flex">
         <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
     </div>
@@ -25,7 +25,7 @@
                 <tr class="border boreder-2 hover:bg-gray-200 active:bg-gray-200 transition transition-delay-1 text-center cursor-pointer">
                     <td class="p-2">{{lab.room|upper}}</td>
                     <td class="p-2">{{lab.floor}}</td>
-                    <td class="p-2">{{lab.status}}</td>
+                    <td class="p-2 font-bold text-blue-600">{{lab.status}}</td>
                     <td class="p-2">
                         <a href="{% url 'LabDetails' pk=lab.pk %}" class="p-1 bg-blue-600 rounded-md text-white hover:bg-blue-500 transition transition-dalay-1">Check</a>
                     </td>
@@ -44,6 +44,53 @@
                     {% if available_page_obj.has_next %}
                         <a href="?page={{ available_page_obj.next_page_number }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Next</a>
                         <a href="?page={{ available_page_obj.paginator.num_pages }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Last &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-2xl py-4 font-bold">Not available today</p>
+    <div class="flex">
+        <p class="bg-purple-100 p-2 rounded-md">{{ date_today }}</p>
+    </div>
+    <div class='flex justify-center'>
+        <div class="bg-white rounded-md shadow-md">
+            <table class="border-separate rounded-md shadow-md">
+                <tr class="border boreder-2 text-center text-white bg-purple-500 rounded-md">
+                    <th class="p-2 rounded-md">ROOM</th>
+                    <th class="p-2 rounded-md">FLOOR</th>
+                    <th class="p-2 rounded-md">STATUS</th>
+                    <th class="p-2 rounded-md">INFO</th>
+                </tr>
+                {% if labsCount < 1 %}
+                    <tr>
+                        <td colspan="10" class="text-center p-4 text-gray-600 text-sm">No data to show.</td>
+                    </tr>
+                {% endif %}
+                {% for lab in not_available_page_obj %}
+                <tr class="border boreder-2 hover:bg-gray-200 active:bg-gray-200 transition transition-delay-1 text-center cursor-pointer">
+                    <td class="p-2">{{lab.room|upper}}</td>
+                    <td class="p-2">{{lab.floor}}</td>
+                    <td class="p-2 text-red-600 font-bold">{{lab.status}}</td>
+                    <td class="p-2">
+                        <a href="{% url 'LabDetails' pk=lab.pk %}" class="p-1 bg-blue-600 rounded-md text-white hover:bg-blue-500 transition transition-dalay-1">Check</a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </table>
+            <div class="flex gap-2 items-center mx-2">
+                <p class="px-4 py-2 float-left text-md text-purple-600">Page {{ not_available_page_obj.number }} of {{ not_available_page_obj.paginator.num_pages }}.</p>
+                <div class="flex gap-2 justify-end">
+    
+                    {% if not_available_page_obj.has_previous %}
+                        <a href="?page=1" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">&laquo; first</a>
+                        <a href="?page={{ not_available_page_obj.previous_page_number }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Prev</a>
+                    {% endif %}
+                    {% if not_available_page_obj.has_next %}
+                        <a href="?page={{ not_available_page_obj.next_page_number }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Next</a>
+                        <a href="?page={{ not_available_page_obj.paginator.num_pages }}" class="bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200 transition transition-delay-1 text-sm">Last &raquo;</a>
                     {% endif %}
                 </div>
             </div>
