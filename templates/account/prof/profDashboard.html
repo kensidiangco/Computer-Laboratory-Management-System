@@ -22,7 +22,7 @@
             {% if pendingSched.count < 1 %}
                 <p class="text-sm py-2">No data.</p>
             {% else %}
-                <p class="text-xl">{{ pendingSched.count }}</p>
+                <p class="text-xl font-bold">{{ pendingSched.count }}</p>
             {% endif %}
         </a>
 
@@ -31,7 +31,7 @@
             {% if availableLabs.count < 1 %}
                 <p class="text-sm py-2">No labs are available.</p>
             {% else %}
-                <p class="text-xl">{{ availableLabs.count }}</p>
+                <p class="text-xl font-bold">{{ availableLabs.count }}</p>
             {% endif %}
         </a>
 
@@ -40,7 +40,7 @@
             {% if notAvailableLabs.count < 1 %}
                 <p class="text-sm py-2">Labs are available.</p>
             {% else %}
-                <p class="text-xl">{{ notAvailableLabs.count }}</p>
+                <p class="text-xl font-bold">{{ notAvailableLabs.count }}</p>
             {% endif %}
         </a>
 
@@ -49,7 +49,7 @@
             {% if approvedSched.count < 1 %}
                 <p class="text-sm py-2">No data.</p>
             {% else %}
-                <p class="text-xl">{{ approvedSched.count }}</p>
+                <p class="text-xl font-bold">{{ approvedSched.count }}</p>
             {% endif %}
         </a>
 
@@ -58,7 +58,7 @@
             {% if onGoingSched.count < 1 %}
                 <p class="text-sm py-2">Comlab is Available</p>
             {% else %}
-                <p class="text-xl py-2">{{ onGoingSched.count }}</p>
+                <p class="text-xl font-bold py-2">{{ onGoingSched.count }}</p>
             {% endif %}
         </a>
 
@@ -67,7 +67,7 @@
             {% if doneSched.count < 1 %}
                 <p class="text-sm py-2">No data.</p>
             {% else %}
-                <p class="text-xl">{{ doneSched.count }}</p>
+                <p class="text-xl font-bold">{{ doneSched.count }}</p>
             {% endif %}
         </a>
 
@@ -76,7 +76,7 @@
             {% if rejectedSched.count < 1 %}
                 <p class="text-sm py-2">No data.</p>
             {% else %}
-                <p class="text-xl">{{ rejectedSched.count }}</p>
+                <p class="text-xl font-bold">{{ rejectedSched.count }}</p>
             {% endif %}
         </a>
     </div>
