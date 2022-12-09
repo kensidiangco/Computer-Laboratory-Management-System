@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn CLMS.wsgi
+web: python manage.py runserver && python manage.py tailwind start && gunicorn CLMS.wsgi
