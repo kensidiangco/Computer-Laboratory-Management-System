@@ -1,1 +1,1 @@
-web: gunicorn CLMS.wsgi
+web: python manage.py collectstatic && gunicorn CLMS.wsgi
