@@ -1,1 +1,1 @@
-web: gunicorn CLMS.wsgi
+web: python manage.py migrate && gunicorn CLMS.wsgi
