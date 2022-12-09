@@ -1,1 +1,1 @@
-web: python manage.py collectstatic && gunicorn CLMS.wsgi
+web: cd theme/static_src && npm ci --include=dev && cd theme/static_src && npm run build && gunicorn CLMS.wsgi
