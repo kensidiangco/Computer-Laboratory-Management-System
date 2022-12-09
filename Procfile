@@ -1,1 +1,1 @@
-web: python manage.py runserver && python manage.py tailwind start && gunicorn CLMS.wsgi
+web: gunicorn CLMS.wsgi
