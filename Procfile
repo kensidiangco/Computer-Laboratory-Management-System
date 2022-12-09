@@ -1,1 +1,1 @@
-web: cd theme/static_src && npm ci --include=dev && cd theme/static_src && npm run build && gunicorn CLMS.wsgi
+web: gunicorn CLMS.wsgi
