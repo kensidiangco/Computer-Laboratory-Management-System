@@ -140,8 +140,6 @@ ENV/
 env.bak/
 venv.bak/
 
-package.json
-
 # Spyder project settings
 .spyderproject
 .spyproject
